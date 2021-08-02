@@ -1,44 +1,84 @@
 let loc = location.href;
+let css = document.createElement('link');
+css.rel = 'stylesheet';
+css.type = 'text/css';
+css.href = '/styles/markdown.css';
+document.head.appendChild(css);
 
-const md = window.markdownit({
-	breaks: true,
-	linkify: true,
-	html: false
-});
+function highlightAs(str, lang) {
+    return Prism.highlight(str, Prism.languages[lang], lang);
+}
+
+const md = window
+	.markdownit({
+		breaks: true,
+		linkify: true,
+		html: false,
+		highlight: (str, lang) => {
+			if (lang && Prism.languages.hasOwnProperty(lang)) {
+				return (
+					'<div class="bbCodeBlock bbCodeBlock--screenLimited bbCodeBlock--code"><div class="bbCodeBlock-title">' +
+					lang +
+					':</div><div class="bbCodeBlock-content"><pre class="bbCodeCode line-numbers language-' +
+					lang +
+					'"><code class="language-' +
+					lang +
+					'">' +
+					highlightAs(str, lang) +
+					'</code></pre></div></div>'
+				);
+			} else {
+				return (
+					'<div class="bbCodeBlock bbCodeBlock--screenLimited bbCodeBlock--code"><div class="bbCodeBlock-title">代码</div><div class="bbCodeBlock-content"><pre class="bbCodeCode line-numbers"><code>' +
+					str +
+					'</code></pre></div></div>'
+				);
+			}
+		}
+	})
+	.enable(['blockquote']);
 
 function removeHtml(from) {
-	return from.replaceAll(/<[^>]*>/g, '');
+	return from.replaceAll(/<\/?(a|abbr|acronym|address|applet|area|article|aside|audio|b|base|basefont|bdi|bdo|bgsound|big|blink|blockquote|body|br|button|canvas|caption|center|cite|code|col|colgroup|data|datalist|dd|del|details|dfn|dir|div|dl|dt|em|embed|fieldset|figcaption|figure|font|footer|form|frame|frameset|h1|h2|h3|h4|h5|h6|head|header|hgroup|hr|html|i|iframe|img|input|ins|isindex|kbd|keygen|label|legend|li|link|listing|main|map|mark|marquee|menu|menuitem|meta|meter|nav|nobr|noframes|noscript|object|ol|optgroup|option|output|p|param|plaintext|pre|progress|q|rp|rt|ruby|s|samp|script|section|select|small|source|spacer|span|strike|strong|style|sub|summary|sup|table|tbody|td|textarea|tfoot|th|thead|time|title|tr|track|tt|u|ul|var|video|wbr|xmp)\b[^<>]*>/g, '');
 }
 
 function removeFirstReturn(from) {
 	return from.replace('\n', '');
 }
 
-function getMarkdownResult(rawHtml) {
+function getMarkdownResult(rawHtml, rawText) {
 	let result = [];
-	let k, e;
+	let k, l, e, f;
 	let sp = rawHtml.split('[MD]');
+    let spT = rawText.split('[MD]');
 	for (let i = 0; i < sp.length; i++) {
-		e = sp[i];
+		e = recoverHTMLChars(sp[i]);
+        f = recoverHTMLChars(spT[i]);
 		if (!e.includes('[/MD]')) {
 			result.push(removeFirstReturn(e));
 			continue;
 		}
 		k = e.split('[/MD]');
-		result.push(md.render(removeHtml(k[0])));
+        l = f.split('[/MD]');
+		result.push(md.render(l[0]));
 		result.push(removeFirstReturn(k[1]));
 	}
 	return result;
 }
 
+function recoverHTMLChars(raw) {
+    return raw.replaceAll("&gt;", ">").replaceAll("&lt;", "<");
+}
+
 function makeMarkdowned(jqObject) {
 	let content = jqObject;
-	let html, result;
+	let html, result, text;
 	content.each((i, e) => {
 		e = $(e);
 		html = e.html();
+        text = e.text();
 		e.text('加载中...');
-		result = getMarkdownResult(html).join('');
+		result = getMarkdownResult(html, text).join('');
 		e.html(result);
 	});
 }
@@ -49,14 +89,13 @@ $(document).ready(() => {
 	}
 
 	if (loc.includes('post-thread') || loc.includes('threads/')) {
-		(function () {
-			orig = $.fn.css;
-			$.fn.css = function () {
-				var result = orig.apply(this, arguments);
-				$(this).trigger('stylechanged');
-				return result;
-			};
-		})();
+		let styleObserver = new MutationObserver(mutations => {
+			mutations.forEach(r => {
+				if (r.target.style.display === '') {
+					makeMarkdowned($('.xfPreview .bbWrapper'));
+				}
+			});
+		});
 		let observer = new MutationObserver(mutations => {
 			mutations.forEach(mutation => {
 				if (loc.includes('threads/')) {
@@ -80,10 +119,9 @@ $(document).ready(() => {
 						if (className === null) continue;
 						className = className.split(' ');
 						if (className.includes('xfPreview')) {
-							$(e).on('stylechanged', f => {
-								if (f.target.style.display === '') {
-									makeMarkdowned($('.xfPreview .bbWrapper'));
-								}
+							styleObserver.observe(e, {
+								attributes: true,
+								attributeFilter: ['style']
 							});
 						}
 						if (className.includes('message') && className.includes('message--post')) {
