@@ -20,7 +20,7 @@ The markdown rendering ability is provided by [markdown-it](https://github.com/m
 
 - Prism
 
-The highlighting ability is provided by [Prism](https://prismjs.com) and it is not optional. Please make sure Prism is loaded before `xenforo-markdown`.
+The highlighting ability is provided by [Prism](https://prismjs.com). Please make sure Prism is loaded before `xenforo-markdown`.
 
 ## Usage
 
@@ -32,10 +32,11 @@ Here is one of the approaches to make the script work in your forum. First downl
 <link rel="stylesheet" href="/path/to/markdown.css"/>
 <script src="/path/to/markdown-it.js"></script>
 <!-- You could use https://cdnjs.cloudflare.com/ajax/libs/markdown-it/12.1.0/markdown-it.min.js -->
-<script src="/path/to/prism.js"></script>
-<!-- Prism is highly customizable. You could customize it and download the version you want at https://prismjs.com -->
+<!-- !!! You can't include Prism here. !!! -->
 <script src="/path/to/xf-markdown.js"></script>
 ```
+
+> The reason why you can't include Prism together with other files in need is that Prism is included by XenForo by default but not for the whole forum. According to testing result, including Prism twice or more will cause strange behaviour and errors that is hard to explain in front-end. So we can't include it if it already exists, and we should include it if it does not exist. You will see the solution and the path configuration at the beginning of `xf-markdown.js`.
 
 Click Save button to save changes. Now the scripts will be loaded in every page of your forum. However, `xenforo-markdown` will only act when `location.href` includes `post-thread` or `threads/`, which refers to the thread posting page and thread viewing page.
 
