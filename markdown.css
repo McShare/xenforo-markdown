@@ -1,0 +1,55 @@
+.xfPreview .bbWrapper h1 + br,
+article.message-body .bbWrapper h1 + br,
+.xfPreview .bbWrapper p + br,
+article.message-body .bbWrapper p + br {
+  display: none;
+}
+.xfPreview .bbWrapper p,
+article.message-body .bbWrapper p {
+  margin: 0;
+}
+.xfPreview .bbWrapper h1,
+article.message-body .bbWrapper h1,
+.xfPreview .bbWrapper h2,
+article.message-body .bbWrapper h2,
+.xfPreview .bbWrapper h3,
+article.message-body .bbWrapper h3,
+.xfPreview .bbWrapper h4,
+article.message-body .bbWrapper h4 {
+  margin: 8px 0;
+}
+.xfPreview .bbWrapper h1,
+article.message-body .bbWrapper h1 {
+  font-size: 26px;
+}
+.xfPreview .bbWrapper h2,
+article.message-body .bbWrapper h2 {
+  font-size: 24px;
+}
+.xfPreview .bbWrapper h3,
+article.message-body .bbWrapper h3 {
+  font-size: 20px;
+}
+.xfPreview .bbWrapper h4,
+article.message-body .bbWrapper h4 {
+  font-size: 16px;
+}
+.xfPreview .bbWrapper em,
+article.message-body .bbWrapper em {
+  font-style: italic !important;
+}
+.xfPreview .bbWrapper table,
+article.message-body .bbWrapper table {
+  width: 100%;
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 16px 0;
+}
+.xfPreview .bbWrapper table th,
+article.message-body .bbWrapper table th,
+.xfPreview .bbWrapper table td,
+article.message-body .bbWrapper table td {
+  border: 1px solid #d3e1f6;
+  background: #fff;
+  padding: 4px;
+}
