@@ -20,18 +20,14 @@ The markdown rendering ability is provided by [markdown-it](https://github.com/m
 
 ## Usage
 
-Here is one of the approaches to make the script work in your forum. First download `xf-markdown.js` and `markdown.less` and put them into `/js` and `/styles` in your root directory. Then go to `Appearance > Styles & Templates > Template Modifications > Add Template Modification` and enter `PAGE_CONTAINER` in the Template field, then choose a proper place in the template for the script.
+Here is one of the approaches to make the script work in your forum. First download `xf-markdown.js` and `markdown.css` and put them into a place you like. Then go to `Appearance > Styles & Templates > Templates` then search and open `PAGE_CONTAINER` template. Create `link` and `script` that links to where the js and css is. Note that it is recommended to put these at the bottom of the file to make sure all the scripts in need are loaded beforehand.
+
+> Please do not use `markdown.less` + the less loader, which will make breaking changes to your website. (saying this according to tests)
 
 ```html
-Find:
-<xf:macro template="helper_js_global" name="body" arg-app="public" arg-jsState="{$jsState}" />
-👆 This is at the bottom of the page where most scripts are loaded, we can put our scripts after them.
-
-Replace:
-<xf:macro template="helper_js_global" name="body" arg-app="public" arg-jsState="{$jsState}" />
-<!-- XenForo seems to have JQuery by default -->
+<link rel="stylesheet" href="/path/to/markdown.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/12.1.0/markdown-it.min.js"></script>
-<script src="/js/xf-markdown.js"></script>
+<script src="/path/to/xf-markdown.js"></script>
 ```
 
 Click Save button to save changes. Now the scripts will be loaded in every page of your forum. However, `xenforo-markdown` will only act when `location.href` includes `post-thread` or `threads/`, which refers to the thread posting page and thread viewing page.
