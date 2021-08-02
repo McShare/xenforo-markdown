@@ -31,7 +31,7 @@ Replace:
 <xf:macro template="helper_js_global" name="body" arg-app="public" arg-jsState="{$jsState}" />
 <!-- XenForo seems to have JQuery by default -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/12.1.0/markdown-it.min.js"></script>
-<script src="/js/markdown.js"></script>
+<script src="/js/xf-markdown.js"></script>
 ```
 
 Click Save button to save changes. Now the scripts will be loaded in every page of your forum. However, `xenforo-markdown` will only act when `location.href` includes `post-thread` or `threads/`, which refers to the thread posting page and thread viewing page.
