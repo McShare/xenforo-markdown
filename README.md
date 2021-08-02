@@ -16,7 +16,11 @@ This script depends on JQuery to work. Please make sure JQuery is loaded before 
 
 - markdown-it
 
-The markdown rendering ability is provided by [markdown-it](https://github.com/markdown-it/markdown-it), so please make sure markdown-it is loaded before `xenforo-markdown`, too.
+The markdown rendering ability is provided by [markdown-it](https://github.com/markdown-it/markdown-it). Please make sure markdown-it is loaded before `xenforo-markdown`.
+
+- Prism
+
+The highlighting ability is provided by [Prism](https://prismjs.com) and it is not optional. Please make sure Prism is loaded before `xenforo-markdown`.
 
 ## Usage
 
@@ -26,7 +30,10 @@ Here is one of the approaches to make the script work in your forum. First downl
 
 ```html
 <link rel="stylesheet" href="/path/to/markdown.css"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/12.1.0/markdown-it.min.js"></script>
+<script src="/path/to/markdown-it.js"></script>
+<!-- You could use https://cdnjs.cloudflare.com/ajax/libs/markdown-it/12.1.0/markdown-it.min.js -->
+<script src="/path/to/prism.js"></script>
+<!-- Prism is highly customizable. You could customize it and download the version you want at https://prismjs.com -->
 <script src="/path/to/xf-markdown.js"></script>
 ```
 
