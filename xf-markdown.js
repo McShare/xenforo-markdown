@@ -1,12 +1,5 @@
 let loc = location.href;
-let lessJs = document.createElement('script');
-lessJs.src = '//cdn.jsdelivr.net/npm/less@4.1.1';
-document.head.appendChild(lessJs);
 let css = document.createElement('link');
-css.rel = 'stylesheet/less';
-css.type = 'text/css';
-css.href = '/styles/markdown.less';
-document.head.appendChild(css);
 
 const md = window.markdownit({
 	breaks: true,
