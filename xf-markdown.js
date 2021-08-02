@@ -1,5 +1,4 @@
 let loc = location.href;
-let css = document.createElement('link');
 
 const md = window.markdownit({
 	breaks: true,
