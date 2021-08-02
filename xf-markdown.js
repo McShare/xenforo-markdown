@@ -4,6 +4,12 @@ css.rel = 'stylesheet';
 css.type = 'text/css';
 css.href = '/styles/markdown.css';
 document.head.appendChild(css);
+if (!window.Prism) {
+    let prism = document.createElement("script");
+    prism.src = "/js/prism.js"; // your own prism script. it's recommended to be the same as that of the forum.
+    prism.setAttribute("data-manual", null);
+    document.head.appendChild(prism);
+}
 
 function highlightAs(str, lang) {
     return Prism.highlight(str, Prism.languages[lang], lang);
@@ -55,15 +61,19 @@ function getMarkdownResult(rawHtml, rawText) {
 		e = recoverHTMLChars(sp[i]);
         f = recoverHTMLChars(spT[i]);
 		if (!e.includes('[/MD]')) {
-			result.push(removeFirstReturn(e));
+			result.push(recoverMD(removeFirstReturn(e)));
 			continue;
 		}
 		k = e.split('[/MD]');
         l = f.split('[/MD]');
-		result.push(md.render(l[0]));
-		result.push(removeFirstReturn(k[1]));
+		result.push(md.render(recoverMD(l[0])));
+		result.push(removeFirstReturn(recoverMD(k[1])));
 	}
 	return result;
+}
+
+function recoverMD(raw) {
+    return raw.replaceAll("\\[MD\\]", "[MD]").replaceAll("\\[/MD\\]", "[/MD]");
 }
 
 function recoverHTMLChars(raw) {
