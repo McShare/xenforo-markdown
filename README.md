@@ -20,7 +20,7 @@ The markdown rendering ability is provided by [markdown-it](https://github.com/m
 
 ## Usage
 
-Here is one of the approaches to make the script work in your forum. Just go to `Appearance > Styles & Templates > Template Modifications > Add Template Modification` and enter `PAGE_CONTAINER` in the Template field, then choose a proper place in the template for the script.
+Here is one of the approaches to make the script work in your forum. First download `xf-markdown.js` and `markdown.less` and put them into `/js` and `/styles` in your root directory. Then go to `Appearance > Styles & Templates > Template Modifications > Add Template Modification` and enter `PAGE_CONTAINER` in the Template field, then choose a proper place in the template for the script.
 
 ```html
 Find:
