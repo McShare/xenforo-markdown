@@ -1,5 +1,7 @@
 # xenforo-markdown
 
+English | [简体中文](./README.zh.md)
+
 `xenforo-markdown` is an alternative solution to enable markdown support in XenForo. Not depending on XenForo itself, it make markdown possible by controlling DOM element (e.g. replace `innerHTML` with rendered one) and observing the element behaviour when posting a thread, updating or editing a post which is capable of Markdown. 
 
 ## Requirements
@@ -16,7 +18,7 @@ This script depends on JQuery to work. Please make sure JQuery is loaded before 
 
 - Showdown
 
-The markdown rendering ability is provided by [Showndown](https://github.com/showdownjs/showdown). Please make sure markdown-it is loaded before `xenforo-markdown`.
+The markdown rendering ability is provided by [Showndown](https://github.com/showdownjs/showdown). Thanks for the advice from [#1](//github.com/McShare/xenforo-markdown/issues). Please make sure markdown-it is loaded before `xenforo-markdown`.
 
 - Prism
 
@@ -41,7 +43,7 @@ Here is one of the approaches to make the script work in your forum.
 <script src="/path/to/xf-markdown.js"></script>
 ```
 
-4. Click Save button to save changes. 
+Click Save button to save changes. 
 
 Now the scripts will be loaded in every page of your forum. However, `xenforo-markdown` will only act when `location.href` includes `post-thread` or `threads/`, which refers to the thread posting page and thread viewing page.
 
