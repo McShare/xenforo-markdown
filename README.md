@@ -14,9 +14,9 @@ Mismatching will cause the script failed to work, and you might have to alter th
 
 This script depends on JQuery to work. Please make sure JQuery is loaded before `xenforo-markdown`. You could just put the scripts in a certain order.
 
-- markdown-it
+- Showdown
 
-The markdown rendering ability is provided by [markdown-it](https://github.com/markdown-it/markdown-it). Please make sure markdown-it is loaded before `xenforo-markdown`.
+The markdown rendering ability is provided by [Showndown](https://github.com/showdownjs/showdown). Please make sure markdown-it is loaded before `xenforo-markdown`.
 
 - Prism
 
@@ -24,21 +24,26 @@ The highlighting ability is provided by [Prism](https://prismjs.com). Please mak
 
 ## Usage
 
-Here is one of the approaches to make the script work in your forum. First download `xf-markdown.js` and `markdown.css` and put them into a place you like. Then go to `Appearance > Styles & Templates > Templates` then search and open `PAGE_CONTAINER` template. Create `link` and `script` that links to where the js and css is. Note that it is recommended to put these at the bottom of the file to make sure all the scripts in need are loaded beforehand.
+Here is one of the approaches to make the script work in your forum.
+
+1. Download `xf-markdown.js`, `prism.js` and `markdown.css` then put them into `/js` and `/styles`. 
+    - **Note:** `prism.js` is not provided in this repository. You could customize & download it [here](https://prismjs.com/download.html).
+    - **Important:** If you want to put `markdown.css` and `prism.js` into a place other than expected, you'll need to change the corresponding field in `xf-markdown.js`.
+2. Go to `Appearance > Styles & Templates > Templates` then search & open the `PAGE_CONTAINER` template.
+3. Fill the content below and put them at somewhere in the template.
+    - **Note:** It is recommended to put these at the bottom of the file to make sure all the scripts in need are loaded beforehand.
 
 > Please do not use `markdown.less` + the less loader, which will make breaking changes to your website. (saying this according to tests)
 
 ```html
-<link rel="stylesheet" href="/path/to/markdown.css"/>
-<script src="/path/to/markdown-it.js"></script>
-<!-- You could use https://cdnjs.cloudflare.com/ajax/libs/markdown-it/12.1.0/markdown-it.min.js -->
-<!-- !!! You can't include Prism here. !!! -->
+<script src="/path/to/showdown.js"></script>
+<!-- https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.min.js -->
 <script src="/path/to/xf-markdown.js"></script>
 ```
 
-> The reason why you can't include Prism together with other files in need is that Prism is included by XenForo by default but not for the whole forum. According to testing result, including Prism twice or more will cause strange behaviour and errors that is hard to explain in front-end. So we can't include it if it already exists, and we should include it if it does not exist. You will see the solution and the path configuration at the beginning of `xf-markdown.js`.
+4. Click Save button to save changes. 
 
-Click Save button to save changes. Now the scripts will be loaded in every page of your forum. However, `xenforo-markdown` will only act when `location.href` includes `post-thread` or `threads/`, which refers to the thread posting page and thread viewing page.
+Now the scripts will be loaded in every page of your forum. However, `xenforo-markdown` will only act when `location.href` includes `post-thread` or `threads/`, which refers to the thread posting page and thread viewing page.
 
 To write your post in Markdown, just put your contents into a BBCode-like structure `[MD][/MD]`.
 
@@ -51,7 +56,7 @@ This is written in Markdown and your will see it in Preview and your final post.
 This is not markdown now! You can use BBCode and RTF here.
 ```
 
-All the text in `[MD]` section will be seen as markdown raw text, and their original format will be ignored. For instance, if you apply the Bold format to the contents covered with `[MD]` label using RTF functions provided by XenForo, the format will be ignored.
+All the text in `[MD]` section will be seen as markdown raw text, and their original format will be ignored. For instance, if you apply the Bold format to the contents covered with `[MD]` label using Rich Text Format functions provided by XenForo, the format will be ignored.
 
 ## Pros and Cons
 
@@ -59,7 +64,7 @@ Pros
 
 - Easy to use, develop and refactor as it is written in JavaScript and does not access any XenForo apis.
 - Easy to install and uninstall. *However it's a bad idea to uninstall it after you tell your users to use markdown. All the content in `[MD]` will become uncovered!*
-- Easy to configure and extend. See more at [markdown-it](https://markdown-it.github.io/markdown-it/)
+- Easy to configure and extend. See more at [Showdown](https://github.com/showdownjs/showdown).
 
 Cons
 - Maybe laggy on some forum or some post which has numerous information, as it's JavaScript.
