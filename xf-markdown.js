@@ -50,22 +50,20 @@ function recoverHTMLChars(raw) {
 	return raw.replaceAll('&gt;', '>').replaceAll('&lt;', '<');
 }
 
-function makeMarkdowned(jqObject, manual) {
-	if (manual) {
-		jqObject.text('加载中...');
-		jqObject.html(getMarkdownResult(manual.text, manual.text).join(''));
-	} else {
-		let content = jqObject;
-		let html, result, text;
-		content.each((i, e) => {
-			e = $(e);
-			html = e.html();
-			text = e.text();
-			e.text('加载中...');
-			result = getMarkdownResult(html, text).join('');
+function makeMarkdowned(jqObject) {
+	let content = jqObject;
+	let html, result, text;
+	content.each((i, e) => {
+		e = $(e);
+		html = e.html();
+		text = e.text();
+		result = getMarkdownResult(html, text).join('');
+		if (result.trim().length > 0) {
 			e.html(result);
-		});
-	}
+		} else {
+			console.warn("markdown error.");
+		}
+	});
 }
 
 function post(url, data) {
