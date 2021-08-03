@@ -1,8 +1,10 @@
+const CSS_PATH = '/styles/markdown.css';
+const PRISM_PATH = '/js/prism.js';
 let loc = location.href;
 let css = document.createElement('link');
 css.rel = 'stylesheet';
 css.type = 'text/css';
-css.href = '/styles/markdown.css';
+css.href = CSS_PATH;
 document.head.appendChild(css);
 
 function highlightAs(str, lang) {
@@ -183,7 +185,7 @@ function main() {
 
 if (!window.Prism) {
 	let prism = document.createElement('script');
-	prism.src = '/js/prism.js'; // your own prism script. it's recommended to be the same as that of the forum.
+	prism.src = PRISM_PATH; // your own prism script. it's recommended to be the same as that of the forum.
 	prism.setAttribute('data-manual', null);
 	prism.setAttribute('xf-markdown', null);
 	prism.addEventListener('load', e => {
