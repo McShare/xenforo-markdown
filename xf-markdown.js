@@ -43,11 +43,11 @@ function getMarkdownResult(rawHtml, rawText) {
 }
 
 function recoverMD(raw) {
-	return raw.replaceAll('\\[MD\\]', '[MD]').replaceAll('\\[/MD\\]', '[/MD]');
+	return raw.replace(/\\\[MD\\\]/g, '[MD]').replace(/\\\[\/MD\\\]/g, '[/MD]');
 }
 
 function recoverHTMLChars(raw) {
-	return raw.replaceAll('&gt;', '>').replaceAll('&lt;', '<');
+	return raw.replace(/&gt;/g, '>').replace(/&lt;/g, '<');
 }
 
 function makeMarkdowned(jqObject) {
