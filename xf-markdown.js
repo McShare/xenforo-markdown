@@ -34,7 +34,7 @@ function getMarkdownResult(rawHtml, rawText) {
 		}
 		k = e.split('[/MD]');
 		l = f.split('[/MD]');
-		result.push(window.MARKDOWN.render(recoverMD(l[0])));
+		result.push(window.MARKDOWN.makeHtml(recoverMD(l[0])));
 		result.push(removeFirstReturn(recoverMD(k[1])));
 	}
 	return result;
@@ -75,34 +75,44 @@ function post(url, data) {
 }
 
 function main() {
-	window.MARKDOWN = window
-		.markdownit({
-			breaks: true,
-			linkify: true,
-			html: false,
-			highlight: (str, lang) => {
-				if (lang && Prism.languages.hasOwnProperty(lang)) {
-					return (
-						'<div class="bbCodeBlock bbCodeBlock--screenLimited bbCodeBlock--code"><div class="bbCodeBlock-title">' +
-						lang +
-						':</div><div class="bbCodeBlock-content"><pre class="bbCodeCode line-numbers language-' +
-						lang +
-						'"><code class="language-' +
-						lang +
-						'">' +
-						highlightAs(str, lang) +
-						'</code></pre></div></div>'
-					);
-				} else {
-					return (
-						'<div class="bbCodeBlock bbCodeBlock--screenLimited bbCodeBlock--code"><div class="bbCodeBlock-title">代码</div><div class="bbCodeBlock-content"><pre class="bbCodeCode line-numbers"><code>' +
-						str +
-						'</code></pre></div></div>'
-					);
+	window.MARKDOWN = new showdown.Converter({
+		extensions: [
+			{
+				type: 'output',
+				filter: (text, converter) => {
+					let gen = text.matchAll(/(<pre><code class=".*?language-(\w+).*?">((.|\n)*?)<\/code><\/pre>)/g);
+					let i = 0;
+					let lang, content;
+					for (let e of gen) {
+						if (i === 0 && e === undefined) {
+							return text;
+						}
+						if (e === undefined) break;
+						console.log(e);
+						[lang, content] = [e[2], e[3]];
+						try {
+							text = text.replaceAll(
+								e[0],
+								'<div class="bbCodeBlock bbCodeBlock--screenLimited bbCodeBlock--code"><div class="bbCodeBlock-title">' +
+									lang +
+									':</div><div class="bbCodeBlock-content"><pre class="bbCodeCode line-numbers language-' +
+									lang +
+									'"><code class="language-' +
+									lang +
+									'">' +
+									highlightAs(recoverHTMLChars(content), lang) +
+									'</code></pre></div></div>'
+							);
+						} catch (e) {
+							return text;
+						}
+					}
+					return text;
 				}
 			}
-		})
-		.enable(['blockquote']);
+		]
+	});
+	window.MARKDOWN.setFlavor('github');
 
 	$(document).ready(() => {
 		if (loc.includes('threads/')) {
