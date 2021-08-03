@@ -90,7 +90,6 @@ function main() {
 							return text;
 						}
 						if (e === undefined) break;
-						console.log(e);
 						[lang, content] = [e[2], e[3]];
 						try {
 							text = text.replaceAll(
