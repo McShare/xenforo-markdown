@@ -114,11 +114,11 @@ function main() {
 	window.MARKDOWN.setFlavor('github');
 
 	$(document).ready(() => {
-		if (loc.includes('threads/')) {
+		if (loc.includes('threads/') || loc.includes('resources/')) {
 			makeMarkdowned($('article.message-body .bbWrapper'));
 		}
 
-		if (loc.includes('post-thread') || loc.includes('threads/')) {
+		if (loc.includes('post-thread') || loc.includes('threads/') || loc.includes('/edit')) {
 			post('/css.php', {
 				css: 'public:CMTV_Code_Prism_plugins.less,public:CMTV_Code_code_block.less,public:bb_code.less,public:bb_code_preview.less'
 			}).done(a => {
