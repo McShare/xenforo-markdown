@@ -114,8 +114,12 @@ function main() {
 	window.MARKDOWN.setFlavor('github');
 
 	$(document).ready(() => {
-		if (loc.includes('threads/') || loc.includes('resources/')) {
+		if (loc.includes('threads/')) {
 			makeMarkdowned($('article.message-body .bbWrapper'));
+		}
+
+		if (loc.includes('resources/')) {
+			makeMarkdowned($('.resourceBody .bbWrapper'));
 		}
 
 		if (loc.includes('post-thread') || loc.includes('threads/') || loc.includes('/edit')) {
