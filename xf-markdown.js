@@ -118,6 +118,10 @@ function main() {
 			makeMarkdowned($('article.message-body .bbWrapper'));
 		}
 
+		if (loc.includes('pages/how-2-ask')) {
+			makeMarkdowned($('.p-body-pageContent .block-body.block-row'))
+		}
+
 		if (loc.includes('resources/')) {
 			makeMarkdowned($('.resourceBody .bbWrapper'));
 		}
