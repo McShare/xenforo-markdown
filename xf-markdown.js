@@ -1,4 +1,4 @@
-const CSS_PATH = 'https://fnmdp.oss-cn-beijing.aliyuncs.com/dev/markdown.css';
+const CSS_PATH = '/css/markdown.css';
 const PRISM_PATH = '/js/prism.js';
 let loc = location.href;
 let css = document.createElement('link');
