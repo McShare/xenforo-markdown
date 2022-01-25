@@ -1,4 +1,4 @@
-const CSS_PATH = '/styles/markdown.css';
+const CSS_PATH = 'https://fnmdp.oss-cn-beijing.aliyuncs.com/dev/markdown.css';
 const PRISM_PATH = '/js/prism.js';
 let loc = location.href;
 let css = document.createElement('link');
@@ -20,15 +20,16 @@ function highlightAs(str, lang) {
 /**
  *
  * @param {string} from 输入文本
+ * @param {boolean} outer 是否针对外部
  * @returns 移除后的文本
  *
- * 移除不允许的 HTML 标签（黑名单模式）。
+ * 移除不允许的 HTML 标签（黑名单模式）。针对外部的移除会更加宽松，保证外部格式正常显示。
  */
-function removeBannedHTML(from) {
-	return from.replace(
-		/<\/?(a|abbr|acronym|address|applet|area|article|aside|audio|base|basefont|bdi|bdo|bgsound|big|blink|body|button|canvas|caption|center|cite|col|colgroup|data|datalist|dd|del|details|dfn|dir|div|dl|dt|embed|fieldset|figcaption|figure|font|footer|form|frame|frameset|h1|h2|h3|h4|h5|h6|head|header|hgroup|html|i|iframe|img|input|ins|isindex|keygen|label|legend|link|listing|main|map|mark|marquee|menu|menuitem|meta|meter|nav|nobr|noframes|noscript|object|ol|optgroup|option|output|param|plaintext|pre|progress|q|rp|rt|ruby|s|samp|script|section|select|source|spacer|span|style|summary|table|tbody|td|textarea|tfoot|th|thead|time|title|tr|track|tt|var|video|wbr|xmp)\b[^<>]*>/g,
-		'&lt;$1&gt;'
-	);
+function removeBannedHTML(from, outer = false) {
+	let reg = outer
+		? /<\/?(acronym|address|applet|area|article|aside|base|basefont|bdi|bdo|bgsound|big|blink|canvas|caption|cite|col|colgroup|data|datalist|details|dfn|dir|fieldset|figcaption|figure|font|frame|frameset|head|header|footer|hgroup|html|iframe|input|ins|isindex|keygen|label|legend|link|listing|main|map|mark|marquee|menu|menuitem|meta|meter|nav|nobr|noframes|noscript|object|optgroup|option|output|param|plaintext|progress|rp|rt|ruby|s|samp|script|select|source|spacer|style|summary|textarea|time|title|track|var|video|audio|wbr|xmp)\b[^<>]*>/g
+		: /<\/?(abbr|acronym|address|applet|area|article|aside|audio|base|basefont|bdi|bdo|bgsound|big|blink|body|button|canvas|caption|cite|col|colgroup|data|datalist|dd|details|dfn|dir|div|dl|dt|embed|fieldset|figcaption|figure|font|footer|form|frame|frameset|head|header|hgroup|html|iframe|input|ins|isindex|keygen|label|legend|link|listing|main|map|mark|marquee|menu|menuitem|meta|meter|nav|nobr|noframes|noscript|object|optgroup|option|output|param|plaintext|progress|q|rp|rt|ruby|s|samp|script|section|select|source|spacer|style|summary|table|tbody|td|textarea|tfoot|th|thead|time|title|tr|track|tt|var|video|wbr|xmp)\b[^<>]*>/g;
+	return from.replace(reg, '&lt;$1&gt;');
 }
 
 /**
@@ -58,7 +59,7 @@ function getMarkdownResult(rawHtml, rawText) {
 	// 对任意以 [MD] 开头的部分进行操作
 	for (let i = 0; i < sp.length; i++) {
 		// 将原 HTML 中被转义的字符恢复
-		e = recoverHTMLChars(sp[i]);
+		e = removeBannedHTML(recoverHTMLChars(sp[i]), true);
 		// 将原文本中被转义的字符恢复，然后过滤黑名单中的 HTML 标签
 		f = removeBannedHTML(recoverHTMLChars(spT[i]));
 		// 如果当前部分不含有结束符，则代表当前部分之内的内容均为正文内容
@@ -107,7 +108,7 @@ function recoverHTMLChars(raw) {
  *
  * 将指定元素的纯文本内容替换为转义后的 HTML 同时并入文档。
  */
-function makeMarkdowned(jqObject) {
+function md(jqObject) {
 	let content = jqObject;
 	let html, result, text;
 	content.each((i, e) => {
@@ -148,6 +149,7 @@ function main() {
 					let gen = text.matchAll(/(<pre><code class=".*?language-(\w+).*?">((.|\n)*?)<\/code><\/pre>)/g);
 					let i = 0;
 					let lang, content;
+
 					for (let e of gen) {
 						if (i === 0 && e === undefined) {
 							return text;
@@ -180,20 +182,22 @@ function main() {
 
 	$(document).ready(() => {
 		if (loc.includes('threads/')) {
-			makeMarkdowned($('article.message-body .bbWrapper'));
+			md($('article.message-body .bbWrapper'));
 		}
 
 		if (loc.includes('pages/how-2-ask')) {
-			makeMarkdowned($('.p-body-pageContent .block-body.block-row'));
+			md($('.p-body-pageContent .block-body.block-row'));
 		}
 
 		if (loc.includes('resources/')) {
-			makeMarkdowned($('.resourceBody .bbWrapper'));
+			md($('.resourceBody .bbWrapper'));
 		}
 
 		if (loc.includes('post-thread') || loc.includes('threads/') || loc.includes('/edit')) {
 			post('/css.php', {
-				css: 'public:CMTV_Code_Prism_plugins.less,public:CMTV_Code_code_block.less,public:bb_code.less,public:bb_code_preview.less'
+				css: 'public:bb_code.less',
+				s: '51',
+				l: '2'
 			}).done(a => {
 				let style = document.createElement('style');
 				style.innerText = a;
@@ -203,7 +207,7 @@ function main() {
 			let styleObserver = new MutationObserver(mutations => {
 				mutations.forEach(r => {
 					if (r.target.style.display === '') {
-						makeMarkdowned($('.xfPreview .bbWrapper'));
+						md($('.xfPreview .bbWrapper'));
 					}
 				});
 			});
@@ -216,7 +220,7 @@ function main() {
 							if (className.includes('message-cell message-cell--main is-editing')) {
 								let el = $(mutation.target.querySelector('article.message-body .bbWrapper'));
 								if (el.text().includes('[MD]') && el.text().includes('[/MD]')) {
-									makeMarkdowned(el);
+									md(el);
 								}
 							}
 						}
@@ -236,7 +240,7 @@ function main() {
 								});
 							}
 							if (className.includes('message') && className.includes('message--post')) {
-								makeMarkdowned($(e.querySelector('article.message-body .bbWrapper')));
+								md($(e.querySelector('article.message-body .bbWrapper')));
 							}
 						}
 					}
