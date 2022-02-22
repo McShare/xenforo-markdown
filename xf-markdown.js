@@ -27,9 +27,9 @@ function highlightAs(str, lang) {
  */
 function removeBannedHTML(from, outer = false) {
 	let reg = outer
-		? /<\/?(acronym|address|applet|area|article|aside|base|basefont|bdi|bdo|bgsound|big|blink|canvas|caption|cite|col|colgroup|data|datalist|details|dfn|dir|fieldset|figcaption|figure|font|frame|frameset|head|header|footer|hgroup|html|input|ins|isindex|keygen|label|legend|link|listing|main|map|mark|marquee|menu|menuitem|meta|meter|nav|nobr|noframes|noscript|object|optgroup|option|output|param|plaintext|progress|rp|rt|ruby|s|samp|script|select|source|spacer|style|summary|textarea|time|title|track|var|video|audio|wbr|xmp)\b[^<>]*>/g
-		: /<\/?(abbr|acronym|address|applet|area|article|aside|audio|base|basefont|bdi|bdo|bgsound|big|blink|body|button|canvas|caption|cite|col|colgroup|data|datalist|dd|details|dfn|dir|div|dl|dt|embed|fieldset|figcaption|figure|font|footer|form|frame|frameset|head|header|hgroup|html|iframe|input|ins|isindex|keygen|label|legend|link|listing|main|map|mark|marquee|menu|menuitem|meta|meter|nav|nobr|noframes|noscript|object|optgroup|option|output|param|plaintext|progress|q|rp|rt|ruby|s|samp|script|section|select|source|spacer|style|summary|table|tbody|td|textarea|tfoot|th|thead|time|title|tr|track|tt|var|video|wbr|xmp)\b[^<>]*>/g;
-	return from.replace(reg, '&lt;$1&gt;');
+		? /<(\/?)(acronym|address|applet|area|article|aside|base|basefont|bdi|bdo|bgsound|big|blink|canvas|caption|cite|col|colgroup|data|datalist|details|dfn|dir|fieldset|figcaption|figure|font|frame|frameset|head|header|footer|hgroup|html|input|ins|isindex|keygen|label|legend|link|listing|main|map|mark|marquee|menu|menuitem|meta|meter|nav|nobr|noframes|noscript|object|optgroup|option|output|param|plaintext|progress|rp|rt|ruby|s|samp|script|select|source|spacer|style|summary|textarea|time|title|track|var|video|audio|wbr|xmp)(\b[^<>]*)>/g
+		: /<(\/?)(abbr|acronym|address|applet|area|article|aside|audio|base|basefont|bdi|bdo|bgsound|big|blink|body|button|canvas|caption|cite|col|colgroup|data|datalist|dd|details|dfn|dir|div|dl|dt|embed|fieldset|figcaption|figure|font|footer|form|frame|frameset|head|header|hgroup|html|iframe|input|ins|isindex|keygen|label|legend|link|listing|main|map|mark|marquee|menu|menuitem|meta|meter|nav|nobr|noframes|noscript|object|optgroup|option|output|param|plaintext|progress|q|rp|rt|ruby|s|samp|script|section|select|source|spacer|style|summary|table|tbody|td|textarea|tfoot|th|thead|time|title|tr|track|tt|var|video|wbr|xmp)(\b[^<>]*)>/g;
+	return from.replace(reg, '&lt;$1$2$3&gt;');
 }
 
 /**
