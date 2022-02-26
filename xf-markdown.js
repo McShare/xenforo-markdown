@@ -1,11 +1,21 @@
-const CSS_PATH = '/styles/markdown.css';
-const PRISM_PATH = '/js/prism.js';
-let loc = location.href;
-let css = document.createElement('link');
-css.rel = 'stylesheet';
-css.type = 'text/css';
-css.href = CSS_PATH;
-document.head.appendChild(css);
+/**
+ * Dependencies:
+ * 
+ * For JavaScript:
+ * 
+ * window.$ - from JQuery (external Library)
+ * window.Prism - from Prism (external library)
+ * window.filterXSS - from xss (external Library)
+ * window.showdown - from Showdown (external Library)
+ * 
+ * They must be loaded before this file to work.
+ * 
+ * For CSS:
+ * 
+ * markdown.css - in repository
+ * 
+ * Must be loaded to display correctly.
+ */
 
 /**
  *
@@ -18,7 +28,7 @@ function highlightAs(str, lang) {
 }
 
 /**
- *
+ * @deprecated
  * @param {string} from 输入文本
  * @param {boolean} outer 是否针对外部
  * @returns 移除后的文本
@@ -30,6 +40,18 @@ function removeBannedHTML(from, outer = false) {
 		? /<(\/?)(acronym|address|applet|area|article|aside|base|basefont|bdi|bdo|bgsound|big|blink|canvas|caption|cite|col|colgroup|data|datalist|details|dfn|dir|fieldset|figcaption|figure|font|frame|frameset|head|header|footer|hgroup|html|input|ins|isindex|keygen|label|legend|link|listing|main|map|mark|marquee|menu|menuitem|meta|meter|nav|nobr|noframes|noscript|object|optgroup|option|output|param|plaintext|progress|rp|rt|ruby|s|samp|script|select|source|spacer|style|summary|textarea|time|title|track|var|video|audio|wbr|xmp)(\b[^<>]*)>/g
 		: /<(\/?)(abbr|acronym|address|applet|area|article|aside|audio|base|basefont|bdi|bdo|bgsound|big|blink|body|button|canvas|caption|cite|col|colgroup|data|datalist|dd|details|dfn|dir|div|dl|dt|embed|fieldset|figcaption|figure|font|footer|form|frame|frameset|head|header|hgroup|html|iframe|input|ins|isindex|keygen|label|legend|link|listing|main|map|mark|marquee|menu|menuitem|meta|meter|nav|nobr|noframes|noscript|object|optgroup|option|output|param|plaintext|progress|q|rp|rt|ruby|s|samp|script|section|select|source|spacer|style|summary|table|tbody|td|textarea|tfoot|th|thead|time|title|tr|track|tt|var|video|wbr|xmp)(\b[^<>]*)>/g;
 	return from.replace(reg, '&lt;$1$2$3&gt;');
+}
+
+/**
+ * 
+ * @param {string} from 输入文本
+ * @returns 移除后的文本
+ * 
+ * 将不允许的 HTML 标签或者无效标签与有效标签划分开。
+ */
+function filter(from) {
+	let reg = /<(\/?)(h1|h2|h3|h4|h5|h6|iframe|b|strong|em|i|p|a|center|small|table|td|th|thead|tbody|ul|ol|li|img|div|blockquote|del|span|br|hr)(\b[^<>]*)>/g;
+	return from.replace(reg, '&lx;$1$2$3&gx;').replace('<', '&lt;').replace('>', '&gt;');
 }
 
 /**
@@ -58,10 +80,8 @@ function getMarkdownResult(rawHtml, rawText) {
 	let spT = rawText.split('[MD]');
 	// 对任意以 [MD] 开头的部分进行操作
 	for (let i = 0; i < sp.length; i++) {
-		// 将原 HTML 中被转义的字符恢复
-		e = removeBannedHTML(recoverHTMLChars(sp[i]), true);
-		// 将原文本中被转义的字符恢复，然后过滤黑名单中的 HTML 标签
-		f = removeBannedHTML(recoverHTMLChars(spT[i]));
+		e = recoverValidHTML(filter(sp[i]));
+		f = recoverValidHTML(filter(spT[i]));
 		// 如果当前部分不含有结束符，则代表当前部分之内的内容均为正文内容
 		// 于是将当前部分内容转义后加入 result 中
 		if (!e.includes('[/MD]')) {
@@ -96,10 +116,10 @@ function recoverMD(raw) {
  * @param {string} raw 输入文本
  * @returns 转义后内容
  *
- * 将 `&gt;` 和 `&lt;` 转义为正常的 `<` 和 `>` 字符
+ * 将 `&gx;` 和 `&lx;` 转换为正常的 `<` 和 `>` 字符
  */
-function recoverHTMLChars(raw) {
-	return raw.replace(/&gt;/g, '>').replace(/&lt;/g, '<');
+function recoverValidHTML(raw) {
+	return raw.replace(/&gx;/g, '>').replace(/&lx;/g, '<');
 }
 
 /**
@@ -117,7 +137,7 @@ function md(jqObject) {
 		text = e.text();
 		result = getMarkdownResult(html, text).join('');
 		if (result.trim().length > 0) {
-			e.html(result);
+			e.html(filterXSS(result));
 		} else {
 			console.warn('markdown error.');
 		}
@@ -166,7 +186,7 @@ function main() {
 									'"><code class="language-' +
 									lang +
 									'">' +
-									highlightAs(recoverHTMLChars(content), lang) +
+									highlightAs(recoverGtLtEntity(content), lang) +
 									'</code></pre></div></div>'
 							);
 						} catch (e) {
@@ -257,15 +277,4 @@ function main() {
 	});
 }
 
-if (!window.Prism) {
-	let prism = document.createElement('script');
-	prism.src = PRISM_PATH; // your own prism script. it's recommended to be the same as that of the forum.
-	prism.setAttribute('data-manual', null);
-	prism.setAttribute('xf-markdown', null);
-	prism.addEventListener('load', e => {
-		main();
-	});
-	document.head.appendChild(prism);
-} else {
-	main();
-}
+main();
