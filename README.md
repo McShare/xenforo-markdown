@@ -16,7 +16,7 @@ This script depends on JQuery to work. You could just put the scripts in a certa
 
 - Showdown
 
-The markdown rendering ability is provided by [Showndown](https://github.com/showdownjs/showdown). Thanks for the advice from [#1](//github.com/McShare/xenforo-markdown/issues).
+The markdown rendering ability is provided by [Showndown](https://github.com/showdownjs/showdown). Thanks for the advice from [#1](https://github.com/McShare/xenforo-markdown/issues/1).
 
 - Prism
 
