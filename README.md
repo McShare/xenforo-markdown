@@ -10,21 +10,10 @@ English | [简体中文](./README.zh.md)
 
 For example, `xenforo-markdown` will render the markdown text to HTML on `.bbWrapper`, which is considered a standard when developing this script. If your XenForo instance uses another set of classes (e.g. `text-wrapper`, `wrapper` etc.) to arrange the elements, they won't be selected as expected because the class name doesn't match, and you may need to read the code and edit it to meet your actual situation.
 
-- JQuery
-
-This script depends on JQuery to work. You could just put the scripts in a certain order.
-
-- Showdown
-
-The markdown rendering ability is provided by [Showndown](https://github.com/showdownjs/showdown). Thanks for the advice from [#1](https://github.com/McShare/xenforo-markdown/issues/1).
-
-- Prism
-
-The highlighting ability is provided by [Prism](https://prismjs.com).
-
-- XSS
-
-Some part of XSS prevention ability is provided by [js-xss](https://github.com/leizongmin/js-xss).
+- JQuery - Basics
+- [Showndown](https://github.com/showdownjs/showdown) - Markdown rendering. Thanks for recommendation from [#1](https://github.com/McShare/xenforo-markdown/issues/1).
+- [Prism](https://prismjs.com) - Code highlighting.
+- [js-xss](https://github.com/leizongmin/js-xss) - Some part of XSS prevention.
 
 **Please make sure all of above is are loaded before `xf-markdown.js`, regardless of order. Missing of any of them will cause failure.**
 
