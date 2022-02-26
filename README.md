@@ -15,7 +15,7 @@ For example, `xenforo-markdown` will render the markdown text to HTML on `.bbWra
 - [Prism](https://prismjs.com) - Code highlighting.
 - [js-xss](https://github.com/leizongmin/js-xss) - Some part of XSS prevention.
 
-**Please make sure all of above is are loaded before `xf-markdown.js`, regardless of order. Missing of any of them will cause failure.**
+**Please make sure all of above are loaded before `xf-markdown.js`, regardless of order. Missing of any of them will cause failure.**
 
 ## Usage
 
