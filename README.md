@@ -8,44 +8,49 @@ English | [简体中文](./README.zh.md)
 
 - **A XenForo instance of which behaviour matches the observer in the script.**
 
-For example, the script will render the markdown text to HTML on an element that has a class called `bbWrapper`, which is considered a standard when developing this script. If your XenForo instance uses another set of classes (e.g. `text-wrapper`, `wrapper` etc.) to arrange the elements' front-end behaviours, they won't be selected as expected because the class name can't match.
-
-Mismatching will cause the script failed to work, and you might have to alter the corresponding content in the script by your own to make it work. 
+For example, `xenforo-markdown` will render the markdown text to HTML on `.bbWrapper`, which is considered a standard when developing this script. If your XenForo instance uses another set of classes (e.g. `text-wrapper`, `wrapper` etc.) to arrange the elements, they won't be selected as expected because the class name doesn't match, and you may need to read the code and edit it to meet your actual situation.
 
 - JQuery
 
-This script depends on JQuery to work. Please make sure JQuery is loaded before `xenforo-markdown`. You could just put the scripts in a certain order.
+This script depends on JQuery to work. You could just put the scripts in a certain order.
 
 - Showdown
 
-The markdown rendering ability is provided by [Showndown](https://github.com/showdownjs/showdown). Thanks for the advice from [#1](//github.com/McShare/xenforo-markdown/issues). Please make sure markdown-it is loaded before `xenforo-markdown`.
+The markdown rendering ability is provided by [Showndown](https://github.com/showdownjs/showdown). Thanks for the advice from [#1](//github.com/McShare/xenforo-markdown/issues).
 
 - Prism
 
-The highlighting ability is provided by [Prism](https://prismjs.com). Please make sure Prism is loaded before `xenforo-markdown`.
+The highlighting ability is provided by [Prism](https://prismjs.com).
+
+- XSS
+
+Some part of XSS prevention ability is provided by [js-xss](https://github.com/leizongmin/js-xss).
+
+**Please make sure all of above is are loaded before `xf-markdown.js`, regardless of order. Missing of any of them will cause failure.**
 
 ## Usage
 
 Here is one of the approaches to make the script work in your forum.
 
-1. Download `xf-markdown.js`, `prism.js` and `markdown.css` then put them into `/js` and `/styles`. 
-    - **Note:** `prism.js` is not provided in this repository. You could customize & download it [here](https://prismjs.com/download.html).
-    - **Important:** If you want to put `markdown.css` and `prism.js` into a place other than expected, you'll need to change the corresponding field in `xf-markdown.js`.
+1. Download `xf-markdown.js` and put it into somewhere that you can access by URL directly.
 2. Go to `Appearance > Styles & Templates > Templates` then search & open the `PAGE_CONTAINER` template.
-3. Fill the content below and put them at somewhere in the template.
-    - **Note:** It is recommended to put these at the bottom of the file to make sure all the scripts in need are loaded beforehand.
+3. Edit the content below to meet your need, and put it into the template content.
+    - **Note:** It is recommended to put these at the bottom of the template content to make sure all the scripts in need are loaded beforehand.
 
 > Please do not use `markdown.less` + the less loader, which will make breaking changes to your website. (saying this according to tests)
 
 ```html
 <script src="/path/to/showdown.js"></script>
+<script src="/path/to/prism.js"></script>
+<script src="/path/to/xss.js"></script>
+<link rel="stylesheet" href="/path/to/markdown.css"/>
 <!-- https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.min.js -->
 <script src="/path/to/xf-markdown.js"></script>
 ```
 
 Click Save button to save changes. 
 
-Now the scripts will be loaded in every page of your forum. However, `xenforo-markdown` will only act when `location.href` includes `post-thread` or `threads/`, which refers to the thread posting page and thread viewing page.
+Now the scripts will be loaded in every page of your forum. However, `xenforo-markdown` will only act when `location.href` includes `post-thread`, `threads/`, and some other keywords (see in code) which refers to the thread posting page, thread content page and others.
 
 To write your post in Markdown, just put your contents into a BBCode-like structure `[MD][/MD]`.
 
@@ -58,7 +63,7 @@ This is written in Markdown and your will see it in Preview and your final post.
 This is not markdown now! You can use BBCode and RTF here.
 ```
 
-All the text in `[MD]` section will be seen as markdown raw text, and their original format will be ignored. For instance, if you apply the Bold format to the contents covered with `[MD]` label using Rich Text Format functions provided by XenForo, the format will be ignored.
+All the text in `[MD]` section will be seen as markdown raw text, and their original format will be ignored. For instance, if you apply the **Bold** format to the contents covered with `[MD]` label using Rich Text Format functions provided by XenForo, the format will be ignored.
 
 ## Pros and Cons
 
