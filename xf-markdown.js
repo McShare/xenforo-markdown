@@ -17,6 +17,8 @@
  * Must be loaded to display correctly.
  */
 
+const loc = window.location.href;
+
 /**
  *
  * @param {string} str 输入文本
@@ -50,8 +52,8 @@ function removeBannedHTML(from, outer = false) {
  * 将不允许的 HTML 标签或者无效标签与有效标签划分开。
  */
 function filter(from) {
-	let reg = /<(\/?)(h1|h2|h3|h4|h5|h6|iframe|b|strong|em|i|p|a|center|small|table|td|th|thead|tbody|ul|ol|li|img|div|blockquote|del|span|br|hr)(\b[^<>]*)>/g;
-	return from.replace(reg, '&lx;$1$2$3&gx;').replace('<', '&lt;').replace('>', '&gt;');
+	let reg = /<(\/?)(h1|h2|h3|h4|h5|h6|iframe|b|strong|em|i|p|a|center|small|table|td|th|tr|thead|tbody|ul|ol|li|img|div|blockquote|del|span|br|hr|button|pre|code)(\b[^<>]*)>/g;
+	return from.replace('&lx;', '<').replace('gx;', '>').replace(reg, '&lx;$1$2$3&gx;').replace('<', '&lt;').replace('>', '&gt;');
 }
 
 /**
