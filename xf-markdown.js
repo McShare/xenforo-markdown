@@ -139,7 +139,7 @@ function md(jqObject) {
 		text = e.text();
 		result = getMarkdownResult(html, text).join('');
 		if (result.trim().length > 0) {
-			e.html(filterXSS(result));
+			e.html(result);
 		} else {
 			console.warn('markdown error.');
 		}
@@ -203,6 +203,16 @@ function main() {
 	window.MARKDOWN.setFlavor('github');
 
 	$(document).ready(() => {
+                post('/css.php', {
+			css: 'public:bb_code.less',
+			s: '51',
+			l: '2'
+		}).done(a => {
+			let style = document.createElement('style');
+			style.innerText = a;
+			style.setAttribute('xf-markdown', null);
+			document.head.appendChild(style);
+		});
 		if (loc.includes('threads/')) {
 			md($('article.message-body .bbWrapper'));
 		}
@@ -216,16 +226,6 @@ function main() {
 		}
 
 		if (loc.includes('post-thread') || loc.includes('threads/') || loc.includes('/edit')) {
-			post('/css.php', {
-				css: 'public:bb_code.less',
-				s: '51',
-				l: '2'
-			}).done(a => {
-				let style = document.createElement('style');
-				style.innerText = a;
-				style.setAttribute('xf-markdown', null);
-				document.head.appendChild(style);
-			});
 			let styleObserver = new MutationObserver(mutations => {
 				mutations.forEach(r => {
 					if (r.target.style.display === '') {
