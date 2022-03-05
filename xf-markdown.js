@@ -189,6 +189,9 @@ function post(url, data) {
 function convertRawPreCode(targetJq) {
 	targetJq.each((i, e) => {
 		$(e).html($(e).html().replace(
+			/<pre(.*?)class="(\w+)"(.*?)data-lang="(\w+)"(.*?)><code>((.|\n)*?)<\/code><\/pre>/g,
+			`<pre$1class="$2 language-$4"$3data-lang="$4"$5><code class="language-$4">$6</code></pre>`
+		).replace(
 			/<pre><code class=".*?language-(\w+).*?">((.|\n)*?)<\/code><\/pre>/g,
 			`<div class="bbCodeBlock bbCodeBlock--screenLimited bbCodeBlock--code"><div class="bbCodeBlock-title">$1:</div><div class="bbCodeBlock-content"><pre class="bbCodeCode line-numbers language-$1"><code class="language-$1">$2</code></pre></div></div>`
 		));
