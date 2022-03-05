@@ -18,6 +18,52 @@
  */
 
 const loc = window.location.href;
+const ATTR = {
+	basic: ['id', 'style', 'class'],
+	none: []
+};
+const xssRule = {
+	whiteList: {
+		h1: ATTR.basic,
+		h2: ATTR.basic,
+		h3: ATTR.basic,
+		h4: ATTR.basic,
+		h5: ATTR.basic,
+		h6: ATTR.basic,
+		span: ATTR.basic,
+		b: ATTR.basic,
+		strong: ATTR.basic,
+		em: ATTR.basic,
+		i: ATTR.basic,
+		p: ATTR.basic,
+		center: ATTR.basic,
+		small: ATTR.basic,
+		iframe: ATTR.none,
+		table: ATTR.basic,
+		td: ATTR.basic,
+		th: ATTR.basic,
+		tr: ATTR.none,
+		thead: ATTR.basic,
+		tbody: ATTR.basic,
+		ul: ATTR.basic,
+		ol: ATTR.basic,
+		li: ATTR.basic,
+		img: ['src', 'style', 'class', 'id', 'alt', 'title', 'height', 'weight', 'loading'],
+		div: ['style', 'class', 'title', 'id'],
+		blockquote: ATTR.basic,
+		del: ATTR.none,
+		hr: ATTR.none,
+		br: ATTR.none,
+		button: ['type', 'class', 'id', 'style'],
+		pre: ['class', 'id', 'style', 'dir'],
+		code: ATTR.basic,
+		a: ['href', 'style', 'class', 'target', 'title', 'rel'],
+		u: ATTR.basic
+	},
+	onIgnoreTagAttr: (tag, name, value, isWhite) => {
+		if (name.startsWith('data-')) return name + '="' + filterXSS.escapeAttrValue(value) + '"';
+	}
+};
 
 /**
  *
