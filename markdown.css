@@ -1,28 +1,37 @@
 .xfPreview .bbWrapper h1 + br,
 article.message-body .bbWrapper h1 + br,
+article.resourceBody-main .bbWrapper h1 + br,
 .xfPreview .bbWrapper p + br,
-article.message-body .bbWrapper p + br {
+article.message-body .bbWrapper p + br,
+article.resourceBody-main .bbWrapper p + br {
   display: none;
 }
 .xfPreview .bbWrapper p,
-article.message-body .bbWrapper p {
+article.message-body .bbWrapper p,
+article.resourceBody-main .bbWrapper p {
   margin: 16px 0;
   line-height: 1.5;
 }
 .xfPreview .bbWrapper ul strong,
 article.message-body .bbWrapper ul strong,
+article.resourceBody-main .bbWrapper ul strong,
 .xfPreview .bbWrapper ol strong,
 article.message-body .bbWrapper ol strong,
+article.resourceBody-main .bbWrapper ol strong,
 .xfPreview .bbWrapper p strong,
-article.message-body .bbWrapper p strong {
+article.message-body .bbWrapper p strong,
+article.resourceBody-main .bbWrapper p strong {
   font-weight: bold;
 }
 .xfPreview .bbWrapper ul code,
 article.message-body .bbWrapper ul code,
+article.resourceBody-main .bbWrapper ul code,
 .xfPreview .bbWrapper ol code,
 article.message-body .bbWrapper ol code,
+article.resourceBody-main .bbWrapper ol code,
 .xfPreview .bbWrapper p code,
-article.message-body .bbWrapper p code {
+article.message-body .bbWrapper p code,
+article.resourceBody-main .bbWrapper p code {
   margin: 0;
   font-size: 90%;
   background: #f1f3fb;
@@ -32,43 +41,53 @@ article.message-body .bbWrapper p code {
   padding-right: 4px;
   padding-bottom: 1px;
   padding-left: 4px;
-  font-family: 'Roboto Mono', 'Andale Mono', 'Ubuntu Mono', monospace;
+  font-family: Consolas, 'Roboto Mono', 'Andale Mono', 'Ubuntu Mono', monospace;
   line-height: 1.4;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
 }
 .xfPreview .bbWrapper h1,
 article.message-body .bbWrapper h1,
+article.resourceBody-main .bbWrapper h1,
 .xfPreview .bbWrapper h2,
 article.message-body .bbWrapper h2,
+article.resourceBody-main .bbWrapper h2,
 .xfPreview .bbWrapper h3,
 article.message-body .bbWrapper h3,
+article.resourceBody-main .bbWrapper h3,
 .xfPreview .bbWrapper h4,
-article.message-body .bbWrapper h4 {
+article.message-body .bbWrapper h4,
+article.resourceBody-main .bbWrapper h4 {
   margin: 8px 0;
 }
 .xfPreview .bbWrapper h1,
-article.message-body .bbWrapper h1 {
+article.message-body .bbWrapper h1,
+article.resourceBody-main .bbWrapper h1 {
   font-size: 26px;
 }
 .xfPreview .bbWrapper h2,
-article.message-body .bbWrapper h2 {
+article.message-body .bbWrapper h2,
+article.resourceBody-main .bbWrapper h2 {
   font-size: 24px;
 }
 .xfPreview .bbWrapper h3,
-article.message-body .bbWrapper h3 {
+article.message-body .bbWrapper h3,
+article.resourceBody-main .bbWrapper h3 {
   font-size: 20px;
 }
 .xfPreview .bbWrapper h4,
-article.message-body .bbWrapper h4 {
+article.message-body .bbWrapper h4,
+article.resourceBody-main .bbWrapper h4 {
   font-size: 16px;
 }
 .xfPreview .bbWrapper em,
-article.message-body .bbWrapper em {
+article.message-body .bbWrapper em,
+article.resourceBody-main .bbWrapper em {
   font-style: italic !important;
 }
 .xfPreview .bbWrapper table,
-article.message-body .bbWrapper table {
+article.message-body .bbWrapper table,
+article.resourceBody-main .bbWrapper table {
   width: 100%;
   border-collapse: collapse;
   empty-cells: show;
@@ -76,90 +95,112 @@ article.message-body .bbWrapper table {
 }
 .xfPreview .bbWrapper table th,
 article.message-body .bbWrapper table th,
+article.resourceBody-main .bbWrapper table th,
 .xfPreview .bbWrapper table td,
-article.message-body .bbWrapper table td {
+article.message-body .bbWrapper table td,
+article.resourceBody-main .bbWrapper table td {
   border: 1px solid #d3e1f6;
   background: #fff;
   padding: 4px;
 }
 .xfPreview .bbWrapper ol,
 article.message-body .bbWrapper ol,
+article.resourceBody-main .bbWrapper ol,
 .xfPreview .bbWrapper ul,
-article.message-body .bbWrapper ul {
+article.message-body .bbWrapper ul,
+article.resourceBody-main .bbWrapper ul {
   padding-left: 20px;
 }
 .xfPreview .bbWrapper pre code .bbCodeBlock .bbCodeBlock-title,
-article.message-body .bbWrapper pre code .bbCodeBlock .bbCodeBlock-title {
-  font-family: Roboto;
+article.message-body .bbWrapper pre code .bbCodeBlock .bbCodeBlock-title,
+article.resourceBody-main .bbWrapper pre code .bbCodeBlock .bbCodeBlock-title {
+  font-family: Consolas, 'Roboto Mono', 'Andale Mono', 'Ubuntu Mono', monospace;
 }
 .xfPreview .bbWrapper pre code .bbCodeBlock .bbCodeBlock-title::before,
 article.message-body .bbWrapper pre code .bbCodeBlock .bbCodeBlock-title::before,
+article.resourceBody-main .bbWrapper pre code .bbCodeBlock .bbCodeBlock-title::before,
 .xfPreview .bbWrapper pre code .bbCodeBlock .bbCodeBlock-title::after,
-article.message-body .bbWrapper pre code .bbCodeBlock .bbCodeBlock-title::after {
+article.message-body .bbWrapper pre code .bbCodeBlock .bbCodeBlock-title::after,
+article.resourceBody-main .bbWrapper pre code .bbCodeBlock .bbCodeBlock-title::after {
   display: none !important;
 }
+.xfPreview .bbWrapper blockquote:not(.bbCodeBlock),
+article.message-body .bbWrapper blockquote:not(.bbCodeBlock),
+article.resourceBody-main .bbWrapper blockquote:not(.bbCodeBlock) {
+  display: flow-root;
+  margin: 0.5em 0;
+  background: #f1f3fb;
+  border: 1px solid #d3e1f6;
+  border-left: 2px solid #2175f3;
+  padding: 12px 15px;
+}
+.xfPreview .bbWrapper blockquote:not(.bbCodeBlock) p,
+article.message-body .bbWrapper blockquote:not(.bbCodeBlock) p,
+article.resourceBody-main .bbWrapper blockquote:not(.bbCodeBlock) p {
+  margin: 0 !important;
+}
 /* fix for prism bug */
-.bbCodeCode .token.comment,
-.bbCodeCode .token.prolog,
-.bbCodeCode .token.doctype,
-.bbCodeCode .token.cdata {
+pre .token.comment,
+pre .token.prolog,
+pre .token.doctype,
+pre .token.cdata {
   color: #a50;
 }
-.bbCodeCode .token.constant {
+pre .token.constant {
   color: #05a;
 }
-.bbCodeCode .token.tag {
+pre .token.tag {
   color: #170;
 }
-.bbCodeCode .token.boolean {
+pre .token.boolean {
   color: #219;
 }
-.bbCodeCode .token.symbol,
-.bbCodeCode .token.atrule,
-.bbCodeCode .token.keyword {
+pre .token.symbol,
+pre .token.atrule,
+pre .token.keyword {
   color: #708;
 }
-.bbCodeCode .token.selector,
-.bbCodeCode .token.function {
+pre .token.selector,
+pre .token.function {
   color: #05a;
 }
-.bbCodeCode .token.deleted {
+pre .token.deleted {
   color: #d44;
 }
-.bbCodeCode .token.inserted {
+pre .token.inserted {
   color: #292;
 }
-.bbCodeCode .token.string,
-.bbCodeCode .token.attr-value {
+pre .token.string,
+pre .token.attr-value {
   color: #a11;
 }
-.bbCodeCode .token.number {
+pre .token.number {
   color: #164;
 }
-.bbCodeCode .token.attr-name,
-.bbCodeCode .token.char,
-.bbCodeCode .token.builtin {
+pre .token.attr-name,
+pre .token.char,
+pre .token.builtin {
   color: #00c;
 }
-.bbCodeCode .token.regex,
-.bbCodeCode .token.important,
-.bbCodeCode .token.variable,
-.bbCodeCode .token.package {
+pre .token.regex,
+pre .token.important,
+pre .token.variable,
+pre .token.package {
   color: #05a;
 }
-.bbCodeCode .token.class-name,
-.bbCodeCode .token.important,
-.bbCodeCode .token.bold {
+pre .token.class-name,
+pre .token.important,
+pre .token.bold {
   color: #00f;
 }
-.bbCodeCode .token.bold {
+pre .token.bold {
   font-weight: bold;
 }
-.bbCodeCode .token.italic,
-.bbCodeCode .token.constant {
+pre .token.italic,
+pre .token.constant {
   color: #05a;
   font-style: italic;
 }
-.bbCodeCode .token.entity {
+pre .token.entity {
   cursor: help;
 }
