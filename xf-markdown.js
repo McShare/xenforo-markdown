@@ -1,19 +1,19 @@
 /**
  * Dependencies:
- * 
+ *
  * For JavaScript:
- * 
+ *
  * window.$ - from JQuery (external Library)
  * window.Prism - from Prism (external library)
  * window.filterXSS - from xss (external Library)
  * window.showdown - from Showdown (external Library)
- * 
+ *
  * They must be loaded before this file to work.
- * 
+ *
  * For CSS:
- * 
+ *
  * markdown.css - in repository
- * 
+ *
  * Must be loaded to display correctly.
  */
 
@@ -76,33 +76,6 @@ function highlightAs(str, lang) {
 }
 
 /**
- * @deprecated
- * @param {string} from 输入文本
- * @param {boolean} outer 是否针对外部
- * @returns 移除后的文本
- *
- * 移除不允许的 HTML 标签（黑名单模式）。针对外部的移除会更加宽松，保证外部格式正常显示。
- */
-function removeBannedHTML(from, outer = false) {
-	let reg = outer
-		? /<(\/?)(acronym|address|applet|area|article|aside|base|basefont|bdi|bdo|bgsound|big|blink|canvas|caption|cite|col|colgroup|data|datalist|details|dfn|dir|fieldset|figcaption|figure|font|frame|frameset|head|header|footer|hgroup|html|input|ins|isindex|keygen|label|legend|link|listing|main|map|mark|marquee|menu|menuitem|meta|meter|nav|nobr|noframes|noscript|object|optgroup|option|output|param|plaintext|progress|rp|rt|ruby|s|samp|script|select|source|spacer|style|summary|textarea|time|title|track|var|video|audio|wbr|xmp)(\b[^<>]*)>/g
-		: /<(\/?)(abbr|acronym|address|applet|area|article|aside|audio|base|basefont|bdi|bdo|bgsound|big|blink|body|button|canvas|caption|cite|col|colgroup|data|datalist|dd|details|dfn|dir|div|dl|dt|embed|fieldset|figcaption|figure|font|footer|form|frame|frameset|head|header|hgroup|html|iframe|input|ins|isindex|keygen|label|legend|link|listing|main|map|mark|marquee|menu|menuitem|meta|meter|nav|nobr|noframes|noscript|object|optgroup|option|output|param|plaintext|progress|q|rp|rt|ruby|s|samp|script|section|select|source|spacer|style|summary|table|tbody|td|textarea|tfoot|th|thead|time|title|tr|track|tt|var|video|wbr|xmp)(\b[^<>]*)>/g;
-	return from.replace(reg, '&lt;$1$2$3&gt;');
-}
-
-/**
- * 
- * @param {string} from 输入文本
- * @returns 移除后的文本
- * 
- * 将不允许的 HTML 标签或者无效标签与有效标签划分开。
- */
-function filter(from) {
-	let reg = /<(\/?)(h1|h2|h3|h4|h5|h6|iframe|b|strong|em|i|p|a|center|small|table|td|th|tr|thead|tbody|ul|ol|li|img|div|blockquote|del|span|br|hr|button|pre|code)(\b[^<>]*)>/g;
-	return from.replace('&lx;', '<').replace('gx;', '>').replace(reg, '&lx;$1$2$3&gx;').replace('<', '&lt;').replace('>', '&gt;');
-}
-
-/**
  *
  * @param {string} from 输入文本
  * @returns 处理后内容
@@ -128,8 +101,8 @@ function getMarkdownResult(rawHtml, rawText) {
 	let spT = rawText.split('[MD]');
 	// 对任意以 [MD] 开头的部分进行操作
 	for (let i = 0; i < sp.length; i++) {
-		e = recoverValidHTML(filter(sp[i]));
-		f = recoverValidHTML(filter(spT[i]));
+		e = sp[i];
+		f = spT[i];
 		// 如果当前部分不含有结束符，则代表当前部分之内的内容均为正文内容
 		// 于是将当前部分内容转义后加入 result 中
 		if (!e.includes('[/MD]')) {
@@ -185,7 +158,7 @@ function md(jqObject) {
 		text = e.text();
 		result = getMarkdownResult(html, text).join('');
 		if (result.trim().length > 0) {
-			e.html(result);
+			e.html(filterXSS(result, xssRule));
 		} else {
 			console.warn('markdown error.');
 		}
@@ -208,48 +181,27 @@ function post(url, data) {
 	});
 }
 
-function main() {
-	window.MARKDOWN = new showdown.Converter({
-		extensions: [
-			{
-				type: 'output',
-				filter: (text, converter) => {
-					let gen = text.matchAll(/(<pre><code class=".*?language-(\w+).*?">((.|\n)*?)<\/code><\/pre>)/g);
-					let i = 0;
-					let lang, content;
+/**
+ * 将指定 JQuery 对象中的未格式化纯代码替换为论坛自带的代码格式，并使用 Prism 高亮化
+ * 
+ * @param {JQuery} targetJq 所要操作的元素的 JQuery 对象
+ */
+function convertRawPreCode(targetJq) {
+	targetJq.each((i, e) => {
+		$(e).html($(e).html().replace(
+			/<pre><code class=".*?language-(\w+).*?">((.|\n)*?)<\/code><\/pre>/g,
+			`<div class="bbCodeBlock bbCodeBlock--screenLimited bbCodeBlock--code"><div class="bbCodeBlock-title">$1:</div><div class="bbCodeBlock-content"><pre class="bbCodeCode line-numbers language-$1"><code class="language-$1">$2</code></pre></div></div>`
+		));
+	})
+	Prism.highlightAll(targetJq);
+}
 
-					for (let e of gen) {
-						if (i === 0 && e === undefined) {
-							return text;
-						}
-						if (e === undefined) break;
-						[lang, content] = [e[2], e[3]];
-						try {
-							text = text.replaceAll(
-								e[0],
-								'<div class="bbCodeBlock bbCodeBlock--screenLimited bbCodeBlock--code"><div class="bbCodeBlock-title">' +
-									lang +
-									':</div><div class="bbCodeBlock-content"><pre class="bbCodeCode line-numbers language-' +
-									lang +
-									'"><code class="language-' +
-									lang +
-									'">' +
-									highlightAs(recoverGtLtEntity(content), lang) +
-									'</code></pre></div></div>'
-							);
-						} catch (e) {
-							return text;
-						}
-					}
-					return text;
-				}
-			}
-		]
-	});
+function main() {
+	window.MARKDOWN = new showdown.Converter();
 	window.MARKDOWN.setFlavor('github');
 
 	$(document).ready(() => {
-                post('/css.php', {
+		post('/css.php', {
 			css: 'public:bb_code.less',
 			s: '51',
 			l: '2'
@@ -259,23 +211,29 @@ function main() {
 			style.setAttribute('xf-markdown', null);
 			document.head.appendChild(style);
 		});
+		let targetEl;
 		if (loc.includes('threads/')) {
-			md($('article.message-body .bbWrapper'));
+			targetEl = $('article.message-body .bbWrapper');
 		}
 
 		if (loc.includes('pages/how-2-ask')) {
-			md($('.p-body-pageContent .block-body.block-row'));
+			targetEl = $('.p-body-pageContent .block-body.block-row');
 		}
 
 		if (loc.includes('resources/')) {
-			md($('.resourceBody .bbWrapper'));
+			targetEl = $('.resourceBody .bbWrapper');
 		}
+
+		md(targetEl);
+		convertRawPreCode(targetEl);
 
 		if (loc.includes('post-thread') || loc.includes('threads/') || loc.includes('/edit')) {
 			let styleObserver = new MutationObserver(mutations => {
 				mutations.forEach(r => {
 					if (r.target.style.display === '') {
-						md($('.xfPreview .bbWrapper'));
+						let el = $('.xfPreview .bbWrapper');
+						md(el);
+						convertRawPreCode(el);
 					}
 				});
 			});
@@ -289,6 +247,7 @@ function main() {
 								let el = $(mutation.target.querySelector('article.message-body .bbWrapper'));
 								if (el.text().includes('[MD]') && el.text().includes('[/MD]')) {
 									md(el);
+									convertRawPreCode(el);
 								}
 							}
 						}
@@ -308,7 +267,9 @@ function main() {
 								});
 							}
 							if (className.includes('message') && className.includes('message--post')) {
-								md($(e.querySelector('article.message-body .bbWrapper')));
+								let el = $(e.querySelector('article.message-body .bbWrapper'));
+								md(el);
+								convertRawPreCode(el);
 							}
 						}
 					}
