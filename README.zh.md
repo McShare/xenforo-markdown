@@ -4,42 +4,28 @@
 
 `xenforo-markdown` 是 XenForo 论坛 Markdown 支持的一个替代方案。它并不依赖 XenForo 本身，只是通过控制元素的内容（比如把元素的原本内容换成解析后的内容）来实现对 Markdown 预览和显示的支持。目前只会影响发布主题和更新主题两个操作。
 
-## 基本要求
+## 对 XenForo 的要求
 
-- **与脚本相匹配的 XenForo**
+要使脚本正常工作，你的 XenForo 上对内容的呈现方式必须与脚本实现的逻辑相匹配。
 
 比如说，脚本会自动把带有 `bbWrapper` 这个类的元素里的文本转换成 HTML 替换上去，而如果你的 XenForo 在这方面表现得不一样，比如这个 `bbWrapper` 在你的论坛上面不叫 `bbWrapper` 而是 `textWrapper`、`wrapper` 之类的话，脚本将不能正常工作。通常情况下的 XenForo 是与脚本相匹配的（因为写脚本也是以当前 XenForo 为参考的），除非有一些特别大的更新或者用上了对这方面有影响的主题。如果类名等不匹配，你可能需要手动修改脚本中相应的内容。
-
-- JQuery - 提供了一些对元素的基本操作
-- [Showndown](https://github.com/showdownjs/showdown) - Markdown 解析，感谢 [#1](https://github.com/McShare/xenforo-markdown/issues/1) 的建议
-- [Prism](https://prismjs.com) - 代码高亮
-- [js-xss](https://github.com/leizongmin/js-xss) - 部分 XSS 防御
-
-**使用的时候请确保它们在 `xf-markdown.js` 之前加载完毕。**
 
 ## 用法
 
 下面简单介绍了基本的安装方法，本质上就是让页面总是加载该脚本。
 
-1. 下载 `xf-markdown.js`，然后放到一个可以用直链访问的地方。
-2. 前往后台里的 `外观 > 风格 & 模板 > 模板列表` 然后搜索 `PAGE_CONTAINER` 模板打开。
+1. 下载 `dist/xf-markdown.min.js` 和 `dist/markdown.min.css`，然后放到一个可以用直链访问的地方。
+2. 前往后台里的 `外观 > 风格 & 模板 > 模板列表` 搜索 `PAGE_CONTAINER` 模板打开。
 3. 把下面的内容修改后复制粘贴到模板中的某个位置。
-    - **提示：** 建议放到整个模板的末尾，这样可以确保所有需要的脚本都加载好了。 
-
-> 不要尝试用 Less loader 来加载项目中的 `markdown.less`，那样会导致有些论坛的布局出现问题（经过测试的结论）。
 
 ```html
-<script src="/path/to/showdown.js"></script>
-<script src="/path/to/prism.js"></script>
-<script src="/path/to/xss.js"></script>
-<link rel="stylesheet" href="/path/to/markdown.css"/>
-<!-- https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.min.js -->
-<script src="/path/to/xf-markdown.js"></script>
+<link rel="stylesheet" href="/path/to/markdown.min.css"/>
+<script src="/path/to/xf-markdown.min.js"></script>
 ```
 
 保存即可。
 
-现在访问每个页面都会加载这两个脚本，不过 `xf-markdown.js` 只会在地址中有 `post-thread`、`threads/` 或者其它几个关键字（详见代码）的时候发挥作用，分别对应发帖和浏览帖子等页面。写 Markdown 的时候，把内容放在 BBCode 类似的这样一个标签 `[MD][/MD]` 里即可。
+现在访问每个页面都会加载该脚本，不过脚本只会在地址中有 `post-thread`、`threads/` 或者其它几个关键字（详见代码）的时候发挥作用，分别对应发帖和浏览帖子等页面。写 Markdown 的时候，把内容放在 BBCode 类似的这样一个标签 `[MD][/MD]` 里即可。
 
 ```bbcode
 [MD]
@@ -51,6 +37,28 @@
 ```
 
 需要注意的是 `[MD][/MD]` 里的内容会被看做是纯文本，所以它们的富文本效果会被忽略。
+
+## 构建
+
+`xf-markdown.min.js` 等可以在浏览器中直接运行的 JS 是从根目录中的 `xf-markdown.ts` 编译打包而来。
+
+要创建一个新的构建，请先确保你的电脑上全局安装了[`uglify-js`](https://github.com/mishoo/UglifyJS)、[`lessc`](https://lesscss.org/usage/) 和 [`esbuild`](https://esbuild.github.io/)。如果没有可以用以下指令安装。
+
+```sh
+npm i uglify-js less esbuild -g
+```
+
+然后运行 `package.json` 里预先写好的 `build` 指令即可。
+
+```sh
+npm run build
+```
+
+运行后会在 `dist` 文件夹里生成以下文件：
+
+- `xf-markdown.js` - 打包和编译后的可以在浏览器中直接运行的 JS 文件
+- `xf-markdown.min.js` - (更快，推荐) 在原文件的基础上压缩并混淆之后的 JS 文件
+- `xf-markdown.min.css` - 压缩后的 CSS 文件，由 `markdown.less` 编译而来
 
 ## 优劣对比
 

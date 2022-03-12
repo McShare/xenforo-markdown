@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES2015",
+    "module": "AMD",  
+    "lib": ["ES2016", "DOM"],
+    "outFile": "dist/xf-markdown.js",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "xf-markdown.ts"
+  ]
+}
