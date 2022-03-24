@@ -14,7 +14,8 @@ import Showdown from 'showdown';
 const loc = window.location.href;
 const ATTR = {
 	basic: ['id', 'style', 'class'],
-	none: []
+	none: [],
+        iframe: ['name', 'height', 'width', 'src', 'referrerpolicy', 'importance', 'allow']
 };
 const xssRule: IFilterXSSOptions = {
 	whiteList: {
@@ -32,7 +33,7 @@ const xssRule: IFilterXSSOptions = {
 		p: ATTR.basic,
 		center: ATTR.basic,
 		small: ATTR.basic,
-		iframe: ATTR.none,
+		iframe: ATTR.iframe,
 		table: ATTR.basic,
 		td: ATTR.basic,
 		th: ATTR.basic,
