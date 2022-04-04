@@ -52,7 +52,8 @@ const xssRule: IFilterXSSOptions = {
 		pre: ['class', 'id', 'style', 'dir'],
 		code: ATTR.basic,
 		a: ['href', 'style', 'class', 'target', 'title', 'rel'],
-		u: ATTR.basic
+		u: ATTR.basic,
+		s: ATTR.none
 	},
 	onIgnoreTagAttr: (tag, name, value, isWhite) => {
 		if (name.startsWith('data-')) return name + '="' + escapeAttrValue(value) + '"';
