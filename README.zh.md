@@ -60,6 +60,7 @@ npm run build
 - `xf-markdown.min.js` - (更快，推荐) 在原文件的基础上压缩并混淆之后的 JS 文件
 - `xf-markdown.min.css` - 压缩后的 CSS 文件，由 `markdown.less` 编译而来
 
+你也可以在 [Action 页面](https://github.com/McShare/xenforo-markdown/actions)下载到每次提交后自动构建的版本。
 ## 优劣对比
 
 优势

@@ -62,6 +62,7 @@ Files generated then in `dist` includes
 - `xf-markdown.min.js` - (*recommended* as faster) The minified & mangled browser-runnable JavaScript file.
 - `xf-markdown.min.css` - The minified css generated from `markdown.less`.
 
+You can also simply download artifacts built automatically every commit from [Actions](https://github.com/McShare/xenforo-markdown/actions).
 ## Pros and Cons
 
 Pros
