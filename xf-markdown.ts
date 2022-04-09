@@ -2,7 +2,7 @@
  * @package xenforo-markdown
  * @author Subilan
  * @license MIT
- * 
+ *
  * markdown.css must be loaded to display correctly.
  */
 
@@ -15,7 +15,7 @@ const loc = window.location.href;
 const ATTR = {
 	basic: ['id', 'style', 'class'],
 	none: [],
-        iframe: ['name', 'height', 'width', 'src', 'referrerpolicy', 'importance', 'allow']
+	iframe: ['name', 'height', 'width', 'src', 'referrerpolicy', 'importance', 'allow']
 };
 const xssRule: IFilterXSSOptions = {
 	whiteList: {
@@ -58,7 +58,8 @@ const xssRule: IFilterXSSOptions = {
 	},
 	onIgnoreTagAttr: (tag, name, value, isWhite) => {
 		if (name.startsWith('data-')) return name + '="' + escapeAttrValue(value) + '"';
-	}
+	},
+	stripIgnoreTagBody: ['script']
 };
 const Markdown = new Showdown.Converter();
 Markdown.setFlavor('github');
@@ -190,7 +191,7 @@ function main() {
 		}).done(a => {
 			let style = document.createElement('style');
 			style.innerText = a;
-			style.setAttribute('xf-markdown', "");
+			style.setAttribute('xf-markdown', '');
 			document.head.appendChild(style);
 		});
 		let targetEl: JQuery<HTMLElement> | null = null;
@@ -208,7 +209,7 @@ function main() {
 
 		if (targetEl === null) return;
 
-        md(targetEl);
+		md(targetEl);
 		convertRawPreCode(targetEl);
 
 		if (loc.includes('post-thread') || loc.includes('threads/') || loc.includes('/edit')) {
@@ -230,15 +231,14 @@ function main() {
 							let className = tg.getAttribute('class');
 							if (className === null) return;
 							if (className.includes('message-cell message-cell--main is-editing')) {
-                                let tgChild = tg.querySelector('article.message-body .bbWrapper');
-                                if (tgChild !== null) {
-                                    let el = $(tgChild) as JQuery<HTMLElement>;
-                                    if (el.text().includes('[MD]') && el.text().includes('[/MD]')) {
-                                        md(el);
-                                        convertRawPreCode(el);
-                                    }
-                                }
-								
+								let tgChild = tg.querySelector('article.message-body .bbWrapper');
+								if (tgChild !== null) {
+									let el = $(tgChild) as JQuery<HTMLElement>;
+									if (el.text().includes('[MD]') && el.text().includes('[/MD]')) {
+										md(el);
+										convertRawPreCode(el);
+									}
+								}
 							}
 						}
 					}
@@ -256,20 +256,19 @@ function main() {
 								});
 							}
 							if (classNames.includes('message') && classNames.includes('message--post')) {
-                                let tgChild = updatedNode.querySelector('article.message-body .bbWrapper');
-                                if (tgChild !== null) {
-                                    let el = $(tgChild) as JQuery<HTMLElement>;
-                                    md(el);
-                                    convertRawPreCode(el);
-                                }
-								
+								let tgChild = updatedNode.querySelector('article.message-body .bbWrapper');
+								if (tgChild !== null) {
+									let el = $(tgChild) as JQuery<HTMLElement>;
+									md(el);
+									convertRawPreCode(el);
+								}
 							}
 						}
 					}
 				});
 			});
 
-			observer.observe(loc.includes('threads/') ? document.querySelector('.p-body-pageContent') as Node : document.body, {
+			observer.observe(loc.includes('threads/') ? (document.querySelector('.p-body-pageContent') as Node) : document.body, {
 				childList: true,
 				subtree: true,
 				attributes: false,
