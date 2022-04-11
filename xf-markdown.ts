@@ -15,7 +15,8 @@ const loc = window.location.href;
 const ATTR = {
 	basic: ['id', 'style', 'class'],
 	none: [],
-	iframe: ['name', 'height', 'width', 'src', 'referrerpolicy', 'importance', 'allow']
+	iframe: ['name', 'height', 'width', 'src', 'referrerpolicy', 'importance', 'allow'],
+        input: ['value', 'type', 'class', 'id', 'style']
 };
 const xssRule: IFilterXSSOptions = {
 	whiteList: {
@@ -54,7 +55,8 @@ const xssRule: IFilterXSSOptions = {
 		code: ATTR.basic,
 		a: ['href', 'style', 'class', 'target', 'title', 'rel'],
 		u: ATTR.basic,
-		s: ATTR.none
+		s: ATTR.none,
+                input: ATTR.input,
 	},
 	onIgnoreTagAttr: (tag, name, value, isWhite) => {
 		if (name.startsWith('data-')) return name + '="' + escapeAttrValue(value) + '"';
