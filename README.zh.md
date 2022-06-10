@@ -14,7 +14,7 @@
 
 下面简单介绍了基本的安装方法，本质上就是让页面总是加载该脚本。
 
-1. 下载 `dist/xf-markdown.min.js` 和 `dist/markdown.min.css`，然后放到一个可以用直链访问的地方。
+1. 从 [Actions](https://github.com/McShare/xenforo-markdown/actions) 处下载最新的构建后解压，将所需的文件放到一个可以用直链访问的地方。
 2. 前往后台里的 `外观 > 风格 & 模板 > 模板列表` 搜索 `PAGE_CONTAINER` 模板打开。
 3. 把下面的内容修改后复制粘贴到模板中的某个位置。
 
