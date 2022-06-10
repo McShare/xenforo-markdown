@@ -57,6 +57,7 @@ const xssRule: IFilterXSSOptions = {
 		u: ATTR.basic,
 		s: ATTR.none,
                 input: ATTR.input,
+                style: ATTR.none
 	},
 	onIgnoreTagAttr: (tag, name, value, isWhite) => {
 		if (name.startsWith('data-')) return name + '="' + escapeAttrValue(value) + '"';
