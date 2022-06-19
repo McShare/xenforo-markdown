@@ -16,7 +16,7 @@ const ATTR = {
 	basic: ['id', 'style', 'class'],
 	none: [],
 	iframe: ['name', 'height', 'width', 'src', 'referrerpolicy', 'importance', 'allow'],
-        input: ['value', 'type', 'class', 'id', 'style']
+	input: ['value', 'type', 'class', 'id', 'style']
 };
 const xssRule: IFilterXSSOptions = {
 	whiteList: {
@@ -56,14 +56,73 @@ const xssRule: IFilterXSSOptions = {
 		a: ['href', 'style', 'class', 'target', 'title', 'rel'],
 		u: ATTR.basic,
 		s: ATTR.none,
-                input: ATTR.input,
-                style: ATTR.none
+		input: ATTR.input,
+		style: ATTR.none
 	},
 	onIgnoreTagAttr: (tag, name, value, isWhite) => {
 		if (name.startsWith('data-')) return name + '="' + escapeAttrValue(value) + '"';
 	},
 	stripIgnoreTagBody: ['script']
 };
+
+class FilterRegex {
+	public static bb = {
+		url: /\[url=(.*?)\](.*?)\[\/url\]/gi,
+		media: /\[media=(.*?)\](.*?)\[\/media\]/gi
+	};
+
+	public static html = {
+		a: /<a href="(.*?)">(.*?)<\/a>/gi,
+		iframe: /<iframe src="(.*?)">.*?<\/iframe>/gi,
+		style: /<style>(.*?)<\/style>/gi,
+		script_src: /<script src="(.*?)"><\/script>/gi,
+		script: /<script>(.*?)<\/script>/gi
+	};
+
+	private static removePlainTag(str: string) {
+		return str.replace("[plain]", "").replace("[/plain]", "");
+	}
+
+	private static compileAndPush(targets: string[], magic: RegExp, pushTarget: string[], pushTargetC: string[]) {
+		for (let t of targets) {
+			let r = magic.exec(t);
+			if (r === null) {
+				console.warn('[Filter] Cannot compile ' + magic + ' with string: ' + t);
+				return;
+			}
+			if (r.length < 3) {
+				console.warn('[Filter] Unexpected compile.');
+				return;
+			}
+			pushTarget.push(r[1]);
+			// 去除被xf莫名加上的[plain][/plain]
+			pushTargetC.push(this.removePlainTag(r[2]));
+		}
+	}
+
+	public static links(raw: string, from: string) {
+		let urls = raw.match(this.bb.url);
+		let htmlas = from.match(this.html.a);
+		if (urls === null || htmlas === null) return from;
+		const magic1 = /\[url=.*(https?[^\]]*)\](.*?)\[\/url\]/gi; // 比上面的更严格
+		const magic2 = /<a href="(https?.*?)"[^>]*\>(.*?)<\/a>/gi;
+		let url: string[] = [],
+			urlContent: string[] = [],
+			href: string[] = [],
+			hrefContent: string[] = [];
+		this.compileAndPush(urls, magic1, url, urlContent);
+		this.compileAndPush(htmlas, magic2, href, hrefContent);
+		console.log(url);
+		console.log(urlContent);
+		console.log(href);
+		console.log(hrefContent);
+		return from;
+	}
+
+	public static execAll(raw: string, from: string) {
+		return this.links(raw, from);
+	}
+}
 const Markdown = new Showdown.Converter();
 Markdown.setFlavor('github');
 
@@ -76,6 +135,28 @@ Markdown.setFlavor('github');
  */
 function removeFirstReturn(from: string) {
 	return from.replace('\n', '');
+}
+
+function filterUnauthorizedHtml(from: string, id: string) {
+	return new Promise<string>((resolve, reject) => {
+		get('/posts/' + id + '/edit')
+			.done(r => {
+				let input = r;
+				if (!input) {
+					console.error('[Filter] Failed to fetch edit content.');
+				}
+				const magic = /<input type="hidden" value="([\s\S][^"]*)"([^>])*>/;
+				let result = magic.exec(input);
+				if (result !== null) {
+					let raw = result[1];
+					from = FilterRegex.execAll(raw, from);
+				} else {
+					console.error('[Filter] Failed to format edit content.');
+				}
+				resolve(from);
+			})
+			.catch(e => reject);
+	});
 }
 
 /**
@@ -132,17 +213,22 @@ function recoverMD(raw: string) {
  */
 function md(jqObject: JQuery<HTMLElement>) {
 	let content = jqObject;
-	let html: string, result: string, text: string, el: JQuery<HTMLElement>;
+	let html: string, result: string, text: string, el: JQuery<HTMLElement>, idString: string, id: string;
 	content.each((i, e) => {
 		el = $(e);
 		html = el.html();
 		text = el.text();
 		result = getMarkdownResult(html, text).join('');
-		if (result.trim().length > 0) {
-			el.html(filterXSS(result, xssRule));
-		} else {
-			console.warn('markdown error.');
-		}
+		idString = el.parent().parent().attr('data-lb-id') || '';
+		id = idString === '' ? '' : idString.split('-')[1];
+		filterUnauthorizedHtml(result, id).then(r => {
+			if (result.trim().length > 0) {
+				el.html(filterXSS(r, xssRule));
+				console.log('[XFMD] Markdown content is successfully rendered.');
+			} else {
+				console.warn('[XFMD] Failed to render markdown content.');
+			}
+		});
 	});
 }
 
@@ -159,6 +245,13 @@ function post(url: string, data: any) {
 		method: 'POST',
 		url,
 		data
+	});
+}
+
+function get(url: string) {
+	return $.ajax({
+		method: 'GET',
+		url
 	});
 }
 
