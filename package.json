@@ -4,7 +4,8 @@
   "description": "Simple alternative implementation of Markdown in XenForo",
   "main": "xf-markdown.ts",
   "scripts": {
-    "build": "esbuild xf-markdown.ts --bundle --outfile=dist/xf-markdown.js && uglifyjs dist/xf-markdown.js -c -m --no-annotations --output dist/xf-markdown.min.js && lessc markdown.less -x > dist/markdown.min.css"
+    "build": "esbuild xf-markdown.ts --bundle --outfile=dist/xf-markdown.js && uglifyjs dist/xf-markdown.js -c -m --no-annotations --output dist/xf-markdown.min.js && lessc markdown.less -x > dist/markdown.min.css",
+    "dev": "tsc -w"
   },
   "repository": {
     "type": "git",
