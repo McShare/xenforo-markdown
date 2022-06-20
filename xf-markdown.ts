@@ -10,6 +10,7 @@ import { escapeAttrValue, IFilterXSSOptions } from 'xss';
 import Prism from 'prismjs';
 import $ from 'jquery';
 import Showdown from 'showdown';
+import _ from 'underscore';
 
 const loc = window.location.href;
 const ATTR = {
@@ -80,47 +81,7 @@ class FilterRegex {
 	};
 
 	private static removePlainTag(str: string) {
-		return str.replace("[plain]", "").replace("[/plain]", "");
-	}
-
-	private static compileAndPush(targets: string[], magic: RegExp, pushTarget: string[], pushTargetC: string[]) {
-		for (let t of targets) {
-			let r = magic.exec(t);
-			if (r === null) {
-				console.warn('[Filter] Cannot compile ' + magic + ' with string: ' + t);
-				return;
-			}
-			if (r.length < 3) {
-				console.warn('[Filter] Unexpected compile.');
-				return;
-			}
-			pushTarget.push(r[1]);
-			// 去除被xf莫名加上的[plain][/plain]
-			pushTargetC.push(this.removePlainTag(r[2]));
-		}
-	}
-
-	public static links(raw: string, from: string) {
-		let urls = raw.match(this.bb.url);
-		let htmlas = from.match(this.html.a);
-		if (urls === null || htmlas === null) return from;
-		const magic1 = /\[url=.*(https?[^\]]*)\](.*?)\[\/url\]/gi; // 比上面的更严格
-		const magic2 = /<a href="(https?.*?)"[^>]*\>(.*?)<\/a>/gi;
-		let url: string[] = [],
-			urlContent: string[] = [],
-			href: string[] = [],
-			hrefContent: string[] = [];
-		this.compileAndPush(urls, magic1, url, urlContent);
-		this.compileAndPush(htmlas, magic2, href, hrefContent);
-		console.log(url);
-		console.log(urlContent);
-		console.log(href);
-		console.log(hrefContent);
-		return from;
-	}
-
-	public static execAll(raw: string, from: string) {
-		return this.links(raw, from);
+		return str.replace('[plain]', '').replace('[/plain]', '');
 	}
 }
 const Markdown = new Showdown.Converter();
@@ -148,8 +109,17 @@ function filterUnauthorizedHtml(from: string, id: string) {
 				const magic = /<input type="hidden" value="([\s\S][^"]*)"([^>])*>/;
 				let result = magic.exec(input);
 				if (result !== null) {
-					let raw = result[1];
-					from = FilterRegex.execAll(raw, from);
+					let raw = _.unescape(result[1]);
+					raw = raw.replace(/\[(ICODE|CODE)\](.*?)\[\/(ICODE|CODE)\]/gi, '[$1]' + _.escape('$2') + '[/$3]'); // 避免对正常展示性代码的误判。
+					raw = raw.replace(/(href|src)="\[URL\](.*?)\[\/URL\]"/gi, '$1="$2"'); // 修复xf自动将href/src值替换为bbcode的URL造成的不匹配。
+					raw.match(/(<\w+\s[^>]*>.*?<\/\w+>)/gi)?.forEach(k => {
+						console.warn('[Filter] Removed unauthorized HTML tag: ' + k);
+						from = from.replace(k, '');
+					});
+					raw.match(/(<\w+[^(\/|>)]*\/>)/gi)?.forEach(k => {
+						console.warn('[Filter] Removed unauthorized HTML tag: ' + k);
+						from = from.replace(k, '');
+					});
 				} else {
 					console.error('[Filter] Failed to format edit content.');
 				}
