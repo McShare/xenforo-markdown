@@ -65,25 +65,6 @@ const xssRule: IFilterXSSOptions = {
 	},
 	stripIgnoreTagBody: ['script']
 };
-
-class FilterRegex {
-	public static bb = {
-		url: /\[url=(.*?)\](.*?)\[\/url\]/gi,
-		media: /\[media=(.*?)\](.*?)\[\/media\]/gi
-	};
-
-	public static html = {
-		a: /<a href="(.*?)">(.*?)<\/a>/gi,
-		iframe: /<iframe src="(.*?)">.*?<\/iframe>/gi,
-		style: /<style>(.*?)<\/style>/gi,
-		script_src: /<script src="(.*?)"><\/script>/gi,
-		script: /<script>(.*?)<\/script>/gi
-	};
-
-	private static removePlainTag(str: string) {
-		return str.replace('[plain]', '').replace('[/plain]', '');
-	}
-}
 const Markdown = new Showdown.Converter();
 Markdown.setFlavor('github');
 
@@ -98,6 +79,12 @@ function removeFirstReturn(from: string) {
 	return from.replace('\n', '');
 }
 
+/**
+ * 
+ * @param from 已解析 Markdown 的 HTML
+ * @param id 对应帖子的 ID
+ * @returns 过滤用户输入标签的已解析 HTML
+ */
 function filterUnauthorizedHtml(from: string, id: string) {
 	return new Promise<string>((resolve, reject) => {
 		get('/posts/' + id + '/edit')
