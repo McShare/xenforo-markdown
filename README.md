@@ -12,7 +12,7 @@ For example, `xenforo-markdown` will render the markdown text to HTML on `.bbWra
 
 ## Usage
 
-**Before you really start to use xenforo-markdown, please consider reading [Important Notes](./important-notes.md) to make sure everything satisfy your expectation.**
+**Before you really start to use xenforo-markdown, please consider reading [Important Notes](./important-notes.md) to make sure everything satisfies your expectation.**
 
 Here is one of the approaches to make the script work in your forum. Simply, it's just loading the script on every page of your forum.
 
