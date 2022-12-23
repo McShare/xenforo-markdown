@@ -275,6 +275,7 @@ function main() {
 		targetEls.forEach(e => {
 			md($(e));
 			convertRawPreCode($(e));
+			Prism.highlightAll();
 		})
 
 		if (loc.includes('post-thread') || loc.includes('threads/') || loc.includes('/edit')) {
@@ -285,6 +286,7 @@ function main() {
 						let el = $('.xfPreview .bbWrapper');
 						md(el);
 						convertRawPreCode(el);
+						Prism.highlightAll();
 					}
 				});
 			});
@@ -327,6 +329,7 @@ function main() {
 									let el = $(tgChild) as JQuery<HTMLElement>;
 									md(el);
 									convertRawPreCode(el);
+									Prism.highlightAll();
 								}
 							}
 						}
