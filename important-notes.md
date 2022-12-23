@@ -1,5 +1,7 @@
 # Important Notes
 
+English | [简体中文](./important-notes.zh.md)
+
 There is no native support for Markdown in XenForo and there is no plugin written with API provided by XenForo, thus making the idea of `xenforo-markdown` possible. It is an *alternative* approach to make it possible for your users to *use* Markdown, **but absolutely not in an elegant way.**
 
 That is, though `xenforo-markdown` provides the feature of rendering markdown text *correctly* (most of the time), the technique behind it may be really a mess. You could feel this through the speed of rendering, stability, bugs, etc.
