@@ -12,6 +12,8 @@
 
 ## 用法
 
+**在正式开始使用 xenforo-markdown 之前，建议阅读[注意事项](./important-notes.zh.md)，确保一切符合你的预期。**
+
 下面简单介绍了基本的安装方法，本质上就是让页面总是加载该脚本。
 
 1. 从 [Actions](https://github.com/McShare/xenforo-markdown/actions) 处下载最新的构建后解压，将所需的文件放到一个可以用直链访问的地方。
