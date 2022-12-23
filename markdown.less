@@ -77,8 +77,8 @@ article.resourceBody-main {
 
 			th,
 			td {
-				border: 1px solid #d3e1f6;
-				background: #fff;
+				border: 1px solid transparent;
+				background: transparent;
 				padding: 4px;
 			}
 		}
@@ -127,6 +127,10 @@ article.resourceBody-main {
 		pre {
 			border-color: #4d5460;
 		}
+
+		th, td {
+			border-color: #4d5460;
+		}
 	}
 
 	&:not(.dark) {
@@ -142,6 +146,10 @@ article.resourceBody-main {
 		}
 
 		pre {
+			border-color: #d3e1f6;
+		}
+
+		th, td {
 			border-color: #d3e1f6;
 		}
 	}
