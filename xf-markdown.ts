@@ -124,15 +124,15 @@ function filterUnauthorizedHtml(from: string, id: string) {
  */
 function getMarkdownResult(rawHtml: string, rawText: string) {
 	let result = [];
-	let htmlBeforeEndtagSlice, textAfterEndtagSlice, currentHtmlSlice, currentTextSlice, textBeforeCodeSlice;
+	let htmlBeforeAndAfterEndtagSlice, textBeforeAndAfterEndtagSlice, currentHtmlSlice, currentTextSlice;
 	// 将原 HTML 根据 [MD] 分成若干部分
-	let htmlSlice = rawHtml.split('[MD]');
+	let htmlSlice1 = rawHtml.split('[MD]');
 	// 将原纯文本根据 [MD] 分成若干部分
-	let textSlice = rawText.split('[MD]');
+	let textSlice1 = rawText.split('[MD]');
 	// 对任意以 [MD] 开头的部分进行操作
-	for (let i = 0; i < htmlSlice.length; i++) {
-		currentHtmlSlice = htmlSlice[i];
-		currentTextSlice = textSlice[i];
+	for (let i = 0; i < htmlSlice1.length; i++) {
+		currentHtmlSlice = htmlSlice1[i];
+		currentTextSlice = textSlice1[i];
 		// 如果当前部分不含有结束符，则代表当前部分之内的内容均为正文内容
 		// 于是将当前部分内容转义后加入 result 中
 		if (!currentHtmlSlice.includes('[/MD]')) {
@@ -141,12 +141,12 @@ function getMarkdownResult(rawHtml: string, rawText: string) {
 		}
 		// 如果当前部分含有结束符，则将当前部分从结束符处分为上部分和下部分
 		// k 为 HTML 纯文本，l 为纯文本
-		htmlBeforeEndtagSlice = currentHtmlSlice.split('[/MD]')[0];
-		textAfterEndtagSlice = currentTextSlice.split('[/MD]')[1];
+		htmlBeforeAndAfterEndtagSlice = currentHtmlSlice.split('[/MD]');
+		textBeforeAndAfterEndtagSlice = currentTextSlice.split('[/MD]');
 		// 将纯文本的上部分进行解析后加入 result
-		result.push(Markdown.makeHtml(recoverMD(textAfterEndtagSlice)));
+		result.push(Markdown.makeHtml(recoverMD(textBeforeAndAfterEndtagSlice[0])));
 		// 将 HTML 的下部分（即非 [MD][/MD] 之间的部分）直接加入 result
-		result.push(removeFirstReturn(recoverMD(htmlBeforeEndtagSlice)));
+		result.push(removeFirstReturn(recoverMD(htmlBeforeAndAfterEndtagSlice[1])));
 	}
 	return result;
 }
@@ -245,6 +245,11 @@ let setDarkmode = () => {
 	setDarkmode = () => { };
 }
 
+let highlightAll = () => {
+	window.Prism.highlightAll();
+	highlightAll = () => { };
+}
+
 function main() {
 	$(() => {
 		post('/css.php', {
@@ -275,7 +280,6 @@ function main() {
 		targetEls.forEach(e => {
 			md($(e));
 			convertRawPreCode($(e));
-			Prism.highlightAll();
 		})
 
 		if (loc.includes('post-thread') || loc.includes('threads/') || loc.includes('/edit')) {
@@ -286,13 +290,14 @@ function main() {
 						let el = $('.xfPreview .bbWrapper');
 						md(el);
 						convertRawPreCode(el);
-						Prism.highlightAll();
+						window.Prism.highlightAll();
 					}
 				});
 			});
 			let observer = new MutationObserver(mutations => {
 				mutations.forEach(r => {
 					setDarkmode();
+					highlightAll();
 					if (loc.includes('threads/')) {
 						let tg = r.target as HTMLElement;
 						if (tg) {
@@ -304,7 +309,8 @@ function main() {
 									let el = $(tgChild) as JQuery<HTMLElement>;
 									if (el.text().includes('[MD]') && el.text().includes('[/MD]')) {
 										md(el);
-										convertRawPreCode(el);
+										convertRawPreCode(el);	
+										window.Prism.highlightAll();
 									}
 								}
 							}
@@ -329,7 +335,7 @@ function main() {
 									let el = $(tgChild) as JQuery<HTMLElement>;
 									md(el);
 									convertRawPreCode(el);
-									Prism.highlightAll();
+									window.Prism.highlightAll();
 								}
 							}
 						}
