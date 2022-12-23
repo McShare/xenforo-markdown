@@ -124,29 +124,29 @@ function filterUnauthorizedHtml(from: string, id: string) {
  */
 function getMarkdownResult(rawHtml: string, rawText: string) {
 	let result = [];
-	let k, l, e, f;
+	let htmlBeforeEndtagSlice, textAfterEndtagSlice, currentHtmlSlice, currentTextSlice, textBeforeCodeSlice;
 	// 将原 HTML 根据 [MD] 分成若干部分
-	let sp = rawHtml.split('[MD]');
+	let htmlSlice = rawHtml.split('[MD]');
 	// 将原纯文本根据 [MD] 分成若干部分
-	let spT = rawText.split('[MD]');
+	let textSlice = rawText.split('[MD]');
 	// 对任意以 [MD] 开头的部分进行操作
-	for (let i = 0; i < sp.length; i++) {
-		e = sp[i];
-		f = spT[i];
+	for (let i = 0; i < htmlSlice.length; i++) {
+		currentHtmlSlice = htmlSlice[i];
+		currentTextSlice = textSlice[i];
 		// 如果当前部分不含有结束符，则代表当前部分之内的内容均为正文内容
 		// 于是将当前部分内容转义后加入 result 中
-		if (!e.includes('[/MD]')) {
-			result.push(recoverMD(removeFirstReturn(e)));
+		if (!currentHtmlSlice.includes('[/MD]')) {
+			result.push(recoverMD(removeFirstReturn(currentHtmlSlice)));
 			continue;
 		}
 		// 如果当前部分含有结束符，则将当前部分从结束符处分为上部分和下部分
 		// k 为 HTML 纯文本，l 为纯文本
-		k = e.split('[/MD]');
-		l = f.split('[/MD]');
+		htmlBeforeEndtagSlice = currentHtmlSlice.split('[/MD]')[0];
+		textAfterEndtagSlice = currentTextSlice.split('[/MD]')[1];
 		// 将纯文本的上部分进行解析后加入 result
-		result.push(Markdown.makeHtml(recoverMD(l[0])));
+		result.push(Markdown.makeHtml(recoverMD(textAfterEndtagSlice)));
 		// 将 HTML 的下部分（即非 [MD][/MD] 之间的部分）直接加入 result
-		result.push(removeFirstReturn(recoverMD(k[1])));
+		result.push(removeFirstReturn(recoverMD(htmlBeforeEndtagSlice)));
 	}
 	return result;
 }
@@ -242,7 +242,7 @@ let setDarkmode = () => {
 		document.querySelectorAll("article.message-body").forEach(e => e.classList.add("dark"));
 		document.querySelectorAll("article.resourceBody-main").forEach(e => e.classList.add("dark"));
 	}
-	setDarkmode = () => {};
+	setDarkmode = () => { };
 }
 
 function main() {
@@ -257,23 +257,25 @@ function main() {
 			style.setAttribute('xf-markdown', '');
 			document.head.appendChild(style);
 		});
-		let targetEl: JQuery<HTMLElement> | null = null;
+		let targetEls: NodeListOf<HTMLElement> | null = null;
 		if (loc.includes('threads/')) {
-			targetEl = $('.message-threadStarterPost article.message-body .bbWrapper');
+			targetEls = document.querySelectorAll('article.message-body .bbWrapper');
 		}
 
 		if (loc.includes('pages/how-2-ask')) {
-			targetEl = $('.p-body-pageContent .block-body.block-row');
+			targetEls = document.querySelectorAll('.p-body-pageContent .block-body.block-row');
 		}
 
 		if (loc.includes('resources/')) {
-			targetEl = $('.resourceBody .bbWrapper');
+			targetEls = document.querySelectorAll('.resourceBody .bbWrapper');
 		}
 
-		if (targetEl === null) return;
+		if (targetEls === null) return;
 
-		md(targetEl);
-		convertRawPreCode(targetEl);
+		targetEls.forEach(e => {
+			md($(e));
+			convertRawPreCode($(e));
+		})
 
 		if (loc.includes('post-thread') || loc.includes('threads/') || loc.includes('/edit')) {
 			let styleObserver = new MutationObserver(mutations => {
