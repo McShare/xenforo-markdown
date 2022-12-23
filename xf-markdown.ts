@@ -249,7 +249,7 @@ function main() {
 		});
 		let targetEl: JQuery<HTMLElement> | null = null;
 		if (loc.includes('threads/')) {
-			targetEl = $('article.message-body .bbWrapper');
+			targetEl = $('.message-threadStarterPost article.message-body .bbWrapper');
 		}
 
 		if (loc.includes('pages/how-2-ask')) {
