@@ -235,6 +235,16 @@ function convertRawPreCode(targetJq: JQuery<HTMLElement>) {
 	Prism.highlightAllUnder(targetJq[0]);
 }
 
+let setDarkmode = () => {
+	if ($("[data-original-title='风格选择']").text() === "暗夜黑") {
+		console.log("[XFMD] Detected dark mode.");
+		document.querySelector(".xfPreview")?.classList.add("dark");
+		document.querySelectorAll("article.message-body").forEach(e => e.classList.add("dark"));
+		document.querySelectorAll("article.resourceBody-main").forEach(e => e.classList.add("dark"));
+	}
+	setDarkmode = () => {};
+}
+
 function main() {
 	$(() => {
 		post('/css.php', {
@@ -278,6 +288,7 @@ function main() {
 			});
 			let observer = new MutationObserver(mutations => {
 				mutations.forEach(r => {
+					setDarkmode();
 					if (loc.includes('threads/')) {
 						let tg = r.target as HTMLElement;
 						if (tg) {
