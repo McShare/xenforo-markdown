@@ -252,6 +252,10 @@ let highlightAll = () => {
 
 function main() {
 	$(() => {
+		const themeIndicator = document.querySelector(`a[data-original-title="风格选择"]`)
+		if (themeIndicator !== null) {
+			document.body.classList.add(themeIndicator.innerHTML === '暗夜黑' ? 'dark' : 'light');
+		}
 		post('/css.php', {
 			css: 'public:bb_code.less',
 			s: '51',
