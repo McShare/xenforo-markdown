@@ -80,7 +80,7 @@ function removeFirstReturn(from: string) {
 }
 
 /**
- * 
+ *
  * @param from 已解析 Markdown 的 HTML
  * @param id 对应帖子的 ID
  * @returns 过滤用户输入标签的已解析 HTML
@@ -178,14 +178,14 @@ function md(jqObject: JQuery<HTMLElement>) {
 		result = getMarkdownResult(html, text).join('');
 		idString = el.parent().parent().attr('data-lb-id') || '';
 		id = idString === '' ? '' : idString.split('-')[1];
-		filterUnauthorizedHtml(result, id).then(r => {
-			if (result.trim().length > 0) {
-				el.html(filterXSS(r, xssRule));
-				console.log('[XFMD] Markdown content is successfully rendered.');
-			} else {
-				console.warn('[XFMD] Failed to render markdown content.');
-			}
-		});
+		// filterUnauthorizedHtml(result, id).then(r => {
+		if (result.trim().length > 0) {
+			el.html(filterXSS(result, xssRule));
+			console.log('[XFMD] Markdown content is successfully rendered.');
+		} else {
+			console.warn('[XFMD] Failed to render markdown content.');
+		}
+		// });
 	});
 }
 
@@ -222,121 +222,66 @@ function convertRawPreCode(targetJq: JQuery<HTMLElement>) {
 		$(e).html(
 			$(e)
 				.html()
-				.replace(
-					/<pre(.*?)class="(\w+)"(.*?)data-lang="(\w+)"(.*?)><code>((.|\n)*?)<\/code><\/pre>/g,
-					`<pre$1class="$2 language-$4"$3data-lang="$4"$5><code class="language-$4">$6</code></pre>`
-				)
-				.replace(
-					/<pre><code class=".*?language-(\w+).*?">((.|\n)*?)<\/code><\/pre>/g,
-					`<div class="bbCodeBlock bbCodeBlock--screenLimited bbCodeBlock--code"><div class="bbCodeBlock-title">$1:</div><div class="bbCodeBlock-content"><pre class="bbCodeCode line-numbers language-$1"><code class="language-$1">$2</code></pre></div></div>`
-				)
+				.replace(/<pre(.*?)class="(\w+)"(.*?)data-lang="(\w+)"(.*?)><code>((.|\n)*?)<\/code><\/pre>/g, `<pre$1class="$2 language-$4"$3data-lang="$4"$5><code class="language-$4">$6</code></pre>`)
+				.replace(/<pre><code class=".*?language-(\w+).*?">((.|\n)*?)<\/code><\/pre>/g, `<div class="bbCodeBlock bbCodeBlock--screenLimited bbCodeBlock--code"><div class="bbCodeBlock-title">$1:</div><div class="bbCodeBlock-content"><pre class="bbCodeCode line-numbers language-$1"><code class="language-$1">$2</code></pre></div></div>`)
 		);
 	});
 	Prism.highlightAllUnder(targetJq[0]);
 }
 
-let setDarkmode = () => {
-	if ($("[data-original-title='风格选择']").text() === "暗夜黑") {
-		console.log("[XFMD] Detected dark mode.");
-		document.querySelector(".xfPreview")?.classList.add("dark");
-		document.querySelectorAll("article.message-body").forEach(e => e.classList.add("dark"));
-		document.querySelectorAll("article.resourceBody-main").forEach(e => e.classList.add("dark"));
-	}
-	setDarkmode = () => { };
-}
-
-let highlightAll = () => {
-	window.Prism.highlightAll();
-	highlightAll = () => { };
-}
-
 function main() {
-	$(() => {
-		const themeIndicator = document.querySelector(`a[data-original-title="风格选择"]`)
-		if (themeIndicator !== null) {
-			document.body.classList.add(themeIndicator.innerHTML === '暗夜黑' ? 'dark' : 'light');
-		}
-		post('/css.php', {
-			css: 'public:bb_code.less',
-			s: '51',
-			l: '2'
-		}).done(a => {
-			let style = document.createElement('style');
-			style.innerText = a;
-			style.setAttribute('xf-markdown', '');
-			document.head.appendChild(style);
-		});
-		let targetEls: NodeListOf<HTMLElement> | null = null;
-		if (loc.includes('threads/')) {
-			targetEls = document.querySelectorAll('article.message-body .bbWrapper');
-		}
+	// get('/css.php?css=public:bb_code.less&s=51&l=2').done(a => {
+	// 	let style = document.createElement('style');
+	// 	style.innerText = a;
+	// 	style.setAttribute('xf-markdown', '');
+	// 	document.head.appendChild(style);
+	// });
+	let targetEls: NodeListOf<HTMLElement> | null = null;
+	if (loc.includes('threads/')) {
+		targetEls = document.querySelectorAll('article.message-body .bbWrapper');
+	}
 
-		if (loc.includes('pages/how-2-ask')) {
-			targetEls = document.querySelectorAll('.p-body-pageContent .block-body.block-row');
-		}
+	if (loc.includes('pages/how-2-ask')) {
+		targetEls = document.querySelectorAll('.p-body-pageContent .block-body.block-row');
+	}
 
-		if (loc.includes('resources/')) {
-			targetEls = document.querySelectorAll('.resourceBody .bbWrapper');
-		}
+	if (loc.includes('resources/')) {
+		targetEls = document.querySelectorAll('.resourceBody .bbWrapper');
+	}
 
-		if (targetEls === null) return;
+	if (targetEls === null) return;
 
-		targetEls.forEach(e => {
-			md($(e));
-			convertRawPreCode($(e));
-		})
+	targetEls.forEach(e => {
+		md($(e));
+		convertRawPreCode($(e));
+	});
 
-		if (loc.includes('post-thread') || loc.includes('threads/') || loc.includes('/edit')) {
-			let styleObserver = new MutationObserver(mutations => {
-				mutations.forEach(r => {
-					let tg = r.target as HTMLElement;
-					if (tg.style.display === '') {
-						let el = $('.xfPreview .bbWrapper');
-						md(el);
-						convertRawPreCode(el);
-						window.Prism.highlightAll();
-					}
-				});
+	if (loc.includes('post-thread') || loc.includes('threads/') || loc.includes('/edit')) {
+		let styleObserver = new MutationObserver(mutations => {
+			mutations.forEach(r => {
+				let tg = r.target as HTMLElement;
+				if (tg.style.display === '') {
+					let el = $('.xfPreview .bbWrapper');
+					md(el);
+					convertRawPreCode(el);
+					window.Prism.highlightAll();
+				}
 			});
-			let observer = new MutationObserver(mutations => {
-				mutations.forEach(r => {
-					setDarkmode();
-					highlightAll();
-					if (loc.includes('threads/')) {
-						let tg = r.target as HTMLElement;
-						if (tg) {
-							let className = tg.getAttribute('class');
-							if (className === null) return;
-							if (className.includes('message-cell message-cell--main is-editing')) {
-								let tgChild = tg.querySelector('article.message-body .bbWrapper');
-								if (tgChild !== null) {
-									let el = $(tgChild) as JQuery<HTMLElement>;
-									if (el.text().includes('[MD]') && el.text().includes('[/MD]')) {
-										md(el);
-										convertRawPreCode(el);	
-										window.Prism.highlightAll();
-									}
-								}
-							}
-						}
-					}
-					if (r.addedNodes.length === 0) return;
-					for (let i = 0; i < r.addedNodes.length; i++) {
-						let updatedNode = r.addedNodes[i] as HTMLElement;
-						if (updatedNode.getAttribute) {
-							let className = updatedNode.getAttribute('class');
-							if (className === null) continue;
-							let classNames = className.split(' ');
-							if (classNames.includes('xfPreview')) {
-								styleObserver.observe(updatedNode, {
-									attributes: true,
-									attributeFilter: ['style']
-								});
-							}
-							if (classNames.includes('message') && classNames.includes('message--post')) {
-								let tgChild = updatedNode.querySelector('article.message-body .bbWrapper');
-								if (tgChild !== null) {
-									let el = $(tgChild) as JQuery<HTMLElement>;
+		});
+
+		let observer = new MutationObserver(mutations => {
+			mutations.forEach(r => {
+				window.Prism.highlightAll();
+				if (loc.includes('threads/')) {
+					let tg = r.target as HTMLElement;
+					if (tg) {
+						let className = tg.getAttribute('class');
+						if (className === null) return;
+						if (className.includes('message-cell message-cell--main is-editing')) {
+							let tgChild = tg.querySelector('article.message-body .bbWrapper');
+							if (tgChild !== null) {
+								let el = $(tgChild) as JQuery<HTMLElement>;
+								if (el.text().includes('[MD]') && el.text().includes('[/MD]')) {
 									md(el);
 									convertRawPreCode(el);
 									window.Prism.highlightAll();
@@ -344,17 +289,43 @@ function main() {
 							}
 						}
 					}
-				});
+				}
+				if (r.addedNodes.length === 0) return;
+				for (let i = 0; i < r.addedNodes.length; i++) {
+					let updatedNode = r.addedNodes[i] as HTMLElement;
+					if (updatedNode.getAttribute) {
+						let className = updatedNode.getAttribute('class');
+						if (className === null) continue;
+						let classNames = className.split(' ');
+						if (classNames.includes('xfPreview')) {
+							styleObserver.observe(updatedNode, {
+								attributes: true,
+								attributeFilter: ['style']
+							});
+						}
+						if (classNames.includes('message') && classNames.includes('message--post')) {
+							let tgChild = updatedNode.querySelector('article.message-body .bbWrapper');
+							if (tgChild !== null) {
+								let el = $(tgChild) as JQuery<HTMLElement>;
+								md(el);
+								convertRawPreCode(el);
+								window.Prism.highlightAll();
+							}
+						}
+					}
+				}
 			});
+		});
 
-			observer.observe(loc.includes('threads/') ? (document.querySelector('.p-body-pageContent') as Node) : document.body, {
-				childList: true,
-				subtree: true,
-				attributes: false,
-				characterData: false
-			});
-		}
-	});
+		observer.observe(loc.includes('threads/') ? (document.querySelector('.p-body-pageContent') as Node) : document.body, {
+			childList: true,
+			subtree: true,
+			attributes: false,
+			characterData: false
+		});
+	}
 }
 
-main();
+$(() => {
+	main();
+});
