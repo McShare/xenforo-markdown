@@ -22,6 +22,7 @@
   "homepage": "https://github.com/McShare/xenforo-markdown#readme",
   "dependencies": {
     "jquery": "^3.6.0",
+    "lessc": "^1.0.2",
     "prismjs": "^1.27.0",
     "showdown": "^2.0.3",
     "underscore": "^1.13.4",
