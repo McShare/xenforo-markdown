@@ -14,7 +14,7 @@ import _ from 'underscore';
 
 const loc = window.location.href;
 const ATTR = {
-	basic: ['id', 'style', 'class'],
+	basic: ['id', 'style', 'class', 'role', 'tabindex'],
 	none: [],
 	iframe: ['name', 'height', 'width', 'src', 'referrerpolicy', 'importance', 'allow'],
 	input: ['value', 'type', 'class', 'id', 'style']
@@ -54,7 +54,7 @@ const xssRule: IFilterXSSOptions = {
 		button: ['type', 'class', 'id', 'style'],
 		pre: ['class', 'id', 'style', 'dir'],
 		code: ATTR.basic,
-		a: ['href', 'style', 'class', 'target', 'title', 'rel'],
+		a: ['href', 'style', 'class', 'target', 'title', 'rel', 'role', 'tabindex'],
 		u: ATTR.basic,
 		s: ATTR.none,
 		input: ATTR.input,
@@ -176,18 +176,18 @@ function md(jqObject: JQuery<HTMLElement>) {
 		html = el.html();
 		text = el.text();
 		result = getMarkdownResult(html, text).join('');
-		filterUnauthorizedHtml(result, location.href + 'edit')
-			.then(r => {
+		// filterUnauthorizedHtml(result, location.href + 'edit')
+		// 	.then(r => {
 				if (result.trim().length > 0) {
 					el.html(filterXSS(result, xssRule));
 					console.log('[XFMD] Markdown content is successfully rendered.');
 				} else {
 					console.warn('[XFMD] Failed to render markdown content.');
 				}
-			})
-			.catch(e => {
-				console.warn('[XFMD] Failed to filter markdown content.');
-			});
+			// })
+			// .catch(e => {
+			// 	console.warn('[XFMD] Failed to filter markdown content.');
+			// });
 	});
 }
 
@@ -266,14 +266,12 @@ function main() {
 					let el = $('.xfPreview .bbWrapper');
 					md(el);
 					convertRawPreCode(el);
-					window.Prism.highlightAll();
 				}
 			});
 		});
 
 		let observer = new MutationObserver(mutations => {
 			mutations.forEach(r => {
-				window.Prism.highlightAll();
 				if (loc.includes('threads/')) {
 					let tg = r.target as HTMLElement;
 					if (tg) {
@@ -286,7 +284,6 @@ function main() {
 								if (el.text().includes('[MD]') && el.text().includes('[/MD]')) {
 									md(el);
 									convertRawPreCode(el);
-									window.Prism.highlightAll();
 								}
 							}
 						}
@@ -311,7 +308,6 @@ function main() {
 								let el = $(tgChild) as JQuery<HTMLElement>;
 								md(el);
 								convertRawPreCode(el);
-								window.Prism.highlightAll();
 							}
 						}
 					}
