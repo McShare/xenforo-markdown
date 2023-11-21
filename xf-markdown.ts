@@ -82,12 +82,12 @@ function removeFirstReturn(from: string) {
 /**
  *
  * @param from 已解析 Markdown 的 HTML
- * @param id 对应帖子的 ID
+ * @param prefix 对应帖子的 ID
  * @returns 过滤用户输入标签的已解析 HTML
  */
-function filterUnauthorizedHtml(from: string, id: string) {
+function filterUnauthorizedHtml(from: string, editURL: string) {
 	return new Promise<string>((resolve, reject) => {
-		get('/posts/' + id + '/edit')
+		get(editURL)
 			.done(r => {
 				let input = r;
 				if (!input) {
@@ -170,22 +170,24 @@ function recoverMD(raw: string) {
  */
 function md(jqObject: JQuery<HTMLElement>) {
 	let content = jqObject;
-	let html: string, result: string, text: string, el: JQuery<HTMLElement>, idString: string, id: string;
+	let html: string, result: string, text: string, el: JQuery<HTMLElement>;
 	content.each((i, e) => {
 		el = $(e);
 		html = el.html();
 		text = el.text();
 		result = getMarkdownResult(html, text).join('');
-		idString = el.parent().parent().attr('data-lb-id') || '';
-		id = idString === '' ? '' : idString.split('-')[1];
-		// filterUnauthorizedHtml(result, id).then(r => {
-		if (result.trim().length > 0) {
-			el.html(filterXSS(result, xssRule));
-			console.log('[XFMD] Markdown content is successfully rendered.');
-		} else {
-			console.warn('[XFMD] Failed to render markdown content.');
-		}
-		// });
+		filterUnauthorizedHtml(result, location.href + 'edit')
+			.then(r => {
+				if (result.trim().length > 0) {
+					el.html(filterXSS(result, xssRule));
+					console.log('[XFMD] Markdown content is successfully rendered.');
+				} else {
+					console.warn('[XFMD] Failed to render markdown content.');
+				}
+			})
+			.catch(e => {
+				console.warn('[XFMD] Failed to filter markdown content.');
+			});
 	});
 }
 
