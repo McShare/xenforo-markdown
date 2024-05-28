@@ -248,7 +248,13 @@ function main() {
 	}
 
 	if (loc.includes('resources/')) {
-		targetEls = document.querySelectorAll('.resourceBody .bbWrapper');
+		// for resource updates page
+		// Pattern: /resources/xyz/updates
+		if (loc.includes('/updates')) {
+			targetEls = document.querySelectorAll('.message-userContent .bbWrapper')
+		} else {
+			targetEls = document.querySelectorAll('.resourceBody .bbWrapper');
+		}
 	}
 
 	if (targetEls === null) return;
