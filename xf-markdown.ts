@@ -238,6 +238,7 @@ function main() {
 	// 	style.setAttribute('xf-markdown', '');
 	// 	document.head.appendChild(style);
 	// });
+
 	let targetEls: NodeListOf<HTMLElement> | null = null;
 	if (loc.includes('threads/')) {
 		targetEls = document.querySelectorAll('article.message-body .bbWrapper');
@@ -257,14 +258,14 @@ function main() {
 		}
 	}
 
-	if (targetEls === null) return;
+	if (targetEls !== null) {
+		targetEls.forEach(e => {
+			md($(e));
+			convertRawPreCode($(e));
+		});
+	}
 
-	targetEls.forEach(e => {
-		md($(e));
-		convertRawPreCode($(e));
-	});
-
-	if (loc.includes('post-thread') || loc.includes('threads/') || loc.includes('/edit')) {
+	if (loc.includes('post-thread') || loc.includes('threads/') || loc.includes('/edit') || loc.includes('resources/')) {
 		let styleObserver = new MutationObserver(mutations => {
 			mutations.forEach(r => {
 				let tg = r.target as HTMLElement;
@@ -330,6 +331,4 @@ function main() {
 	}
 }
 
-$(() => {
-	main();
-});
+$(() => main());
