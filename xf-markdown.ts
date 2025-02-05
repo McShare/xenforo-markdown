@@ -65,7 +65,10 @@ const xssRule: IFilterXSSOptions = {
 	},
 	stripIgnoreTagBody: ['script']
 };
-const Markdown = new Showdown.Converter();
+const Markdown = new Showdown.Converter({
+	tables: true,
+	simplifiedAutoLink: true
+});
 Markdown.setFlavor('github');
 
 /**
