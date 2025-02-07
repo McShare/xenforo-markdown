@@ -16,7 +16,7 @@ const loc = window.location.href;
 const ATTR = {
 	basic: ['id', 'style', 'class', 'role', 'tabindex'],
 	none: [],
-	iframe: ['name', 'height', 'width', 'src', 'referrerpolicy', 'importance', 'allow'],
+	iframe: ['name', 'height', 'width', 'src', 'referrerpolicy', 'importance', 'allow', 'scrolling', 'frameborder'],
 	input: ['value', 'type', 'class', 'id', 'style']
 };
 const xssRule: IFilterXSSOptions = {
