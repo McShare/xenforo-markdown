@@ -250,7 +250,7 @@ function main() {
 			mutations.forEach(r => {
 				let tg = r.target as HTMLElement;
 				if (tg.style.display === '') {
-					let el = $('.xfPreview .bbWrapper');
+					let el = $('.xfPreview');
 					md(el);
 					convertRawPreCode(el);
 				}
