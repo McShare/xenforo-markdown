@@ -2,7 +2,7 @@
 
 English | [简体中文](./README.zh.md)
 
-`xenforo-markdown` is an alternative solution to enable markdown support in XenForo. Not depending on XenForo itself, it make markdown possible by observing the element behaviour (e.g. a new `div` appeared after posting a new reply) and editing DOM element (e.g. replace element's `innerHTML` with rendered one).
+`xenforo-markdown` is an alternative solution to enable markdown support in XenForo. Not depending on XenForo itself, it makes markdown possible by observing the element behaviour (e.g. when a new `div` appeared after posting a new reply, do ...) and editing DOM element (e.g. replace element's `innerHTML` with the rendered one).
 
 ## XenForo Requirements
 
