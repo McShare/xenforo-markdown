@@ -24,6 +24,7 @@
     "jquery": "^3.6.0",
     "less-plugin-clean-css": "^1.5.1",
     "lessc": "^1.0.2",
+    "markdown-it": "^14.1.0",
     "prismjs": "^1.27.0",
     "showdown": "^2.0.3",
     "underscore": "^1.13.4",
@@ -31,6 +32,7 @@
   },
   "devDependencies": {
     "@types/jquery": "^3.5.14",
+    "@types/markdown-it": "^14.1.2",
     "@types/prismjs": "^1.26.0",
     "@types/showdown": "^1.9.4",
     "@types/underscore": "^1.11.4",

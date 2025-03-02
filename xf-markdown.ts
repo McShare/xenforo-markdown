@@ -9,7 +9,7 @@
 import { escapeAttrValue, IFilterXSSOptions } from 'xss';
 import Prism from 'prismjs';
 import $ from 'jquery';
-import Showdown from 'showdown';
+import MarkdownIt from 'markdown-it';
 import _ from 'underscore';
 
 const loc = window.location.href;
@@ -65,11 +65,9 @@ const xssRule: IFilterXSSOptions = {
 	},
 	stripIgnoreTagBody: ['script']
 };
-const Markdown = new Showdown.Converter({
-	tables: true,
-	simplifiedAutoLink: true
-});
-Markdown.setFlavor('github');
+const Markdown = new MarkdownIt({
+	linkify: true
+})
 
 /**
  *
@@ -147,7 +145,7 @@ function getMarkdownResult(rawHtml: string, rawText: string) {
 		htmlBeforeAndAfterEndtagSlice = currentHtmlSlice.split('[/MD]');
 		textBeforeAndAfterEndtagSlice = currentTextSlice.split('[/MD]');
 		// 将纯文本的上部分进行解析后加入 result
-		result.push(Markdown.makeHtml(recoverMD(textBeforeAndAfterEndtagSlice[0])));
+		result.push(Markdown.render(recoverMD(textBeforeAndAfterEndtagSlice[0])));
 		// 将 HTML 的下部分（即非 [MD][/MD] 之间的部分）直接加入 result
 		result.push(removeFirstReturn(recoverMD(htmlBeforeAndAfterEndtagSlice[1])));
 	}
