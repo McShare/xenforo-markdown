@@ -39,7 +39,11 @@ waitFor("a[class*='js-styleVariationsLink']").then(() => {
 					document.querySelector('.xfPreview')?.classList.add('dark');
 					document.querySelectorAll('article.message-body').forEach(e => e.classList.add('dark'));
 					document.querySelectorAll('article.resourceBody-main').forEach(e => e.classList.add('dark'));
-				}
+				} else {
+                    document.querySelector('.xfPreview')?.classList.remove('dark');
+					document.querySelectorAll('article.message-body').forEach(e => e.classList.remove('dark'));
+					document.querySelectorAll('article.resourceBody-main').forEach(e => e.classList.remove('dark'));
+                }
 			}
 		});
 	});
