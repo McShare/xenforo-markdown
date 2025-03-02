@@ -4,6 +4,8 @@
 
 `xenforo-markdown` 是 XenForo 论坛 Markdown 支持的一个替代方案。它并不依赖 XenForo 本身，只是通过控制元素的内容（比如把元素的原本内容换成解析后的内容）来实现对 Markdown 预览和显示的支持。目前只会影响发布主题和更新主题两个操作。
 
+本项目所用到的 Markdown 解析库为 [markdown-it](https://github.com/markdown-it/markdown-it)。在 v1.1.0 之前，使用的是 Showdown（现已不再维护）。
+
 ## 对 XenForo 的要求
 
 要使脚本正常工作，你的 XenForo 上对内容的呈现方式必须与脚本实现的逻辑相匹配。
@@ -78,9 +80,13 @@ npm run build
 
 - 用起来写起来装起来都比较简单，因为不依靠任何 XenForo 的 API。
 - 安装和卸载很容易而且没有残留。*不过不建议在跟你的用户说可以用 Markdown 以后卸载，因为这样所有的 `[MD][/MD]` 内容都会变为纯文本。*
-- 拓展起来很方便，详见 [Showdown](https://github.com/showdownjs/showdown)。
+- 全面 CommonMark 语法支持。详见 [markdown-it](https://github.com/markdown-it/markdown-it)
 
 劣势
 - 因为这是用 JS 写的所以对于一些较大的数据处理起来会比较卡。
 - 只是在前端将内容获取、转换然后替换，并没有做到和后端一样直接返回消息到前端来。这种方法说实话不是很好，显得有些多余，而且还会有性能问题。
 - 如果网络或者设备比较慢是会有一段时间看到 `[MD][/MD]` 里的内容的。如果你有解决的思路可以提 PR 或者 Issue。
+
+# 协议
+
+MIT

@@ -4,6 +4,8 @@ English | [简体中文](./README.zh.md)
 
 `xenforo-markdown` is an alternative solution to enable markdown support in XenForo. Not depending on XenForo itself, it makes markdown possible by observing the element behaviour (e.g. when a new `div` appeared after posting a new reply, do ...) and editing DOM element (e.g. replace element's `innerHTML` with the rendered one).
 
+The markdown parsing libary used in this project is [markdown-it](https://github.com/markdown-it/markdown-it). Before v1.1.0, it's Showdown (not maintained any longer).
+
 ## XenForo Requirements
 
 The behaviour of your XenForo instance must match.
@@ -80,9 +82,13 @@ Pros
 
 - Easy to use, develop and refactor as it is written in JavaScript and does not access any XenForo apis.
 - Easy to install and uninstall. *However it's a bad idea to uninstall it after you tell your users to use markdown. All the content in `[MD]` will become uncovered!*
-- Easy to configure and extend. See more at [Showdown](https://github.com/showdownjs/showdown).
+- 100% CommonMark support. See in [markdown-it](https://github.com/markdown-it/markdown-it).
 
 Cons
 - Maybe laggy on some forum or some post which has numerous information, as it's JavaScript.
 - It changes the original content and depends on the original content to render. That is, the content is replaced in a way that seemed unnecessary. If it is an addon of XenForo, maybe it's possible to directly return the rendered content to front-end. However, the api doesn't seem to be easy to use in this aspect.
 - The source code of Markdown will appear in some laggy situations or devices, as the script needs time to render and control the DOM, which breaks (slightly) the user experience.
+
+# License
+
+MIT
