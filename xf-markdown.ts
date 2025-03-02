@@ -88,36 +88,36 @@ function removeFirstReturn(from: string) {
  * @param prefix 对应帖子的 ID
  * @returns 过滤用户输入标签的已解析 HTML
  */
-function filterUnauthorizedHtml(from: string, editURL: string) {
-	return new Promise<string>((resolve, reject) => {
-		get(editURL)
-			.done(r => {
-				let input = r;
-				if (!input) {
-					console.error('[Filter] Failed to fetch edit content.');
-				}
-				const magic = /<input type="hidden" value="([\s\S][^"]*)"([^>])*>/;
-				let result = magic.exec(input);
-				if (result !== null) {
-					let raw = _.unescape(result[1]);
-					raw = raw.replace(/\[(ICODE|CODE)\](.*?)\[\/(ICODE|CODE)\]/gi, '[$1]' + _.escape('$2') + '[/$3]'); // 避免对正常展示性代码的误判。
-					raw = raw.replace(/(href|src)="\[URL\](.*?)\[\/URL\]"/gi, '$1="$2"'); // 修复xf自动将href/src值替换为bbcode的URL造成的不匹配。
-					raw.match(/(<\w+\s[^>]*>.*?<\/\w+>)/gi)?.forEach(k => {
-						console.warn('[Filter] Removed unauthorized HTML tag: ' + k);
-						from = from.replace(k, '');
-					});
-					raw.match(/(<\w+[^(\/|>)]*\/>)/gi)?.forEach(k => {
-						console.warn('[Filter] Removed unauthorized HTML tag: ' + k);
-						from = from.replace(k, '');
-					});
-				} else {
-					console.error('[Filter] Failed to format edit content.');
-				}
-				resolve(from);
-			})
-			.catch(e => reject);
-	});
-}
+// function filterUnauthorizedHtml(from: string, editURL: string) {
+// 	return new Promise<string>((resolve, reject) => {
+// 		get(editURL)
+// 			.done(r => {
+// 				let input = r;
+// 				if (!input) {
+// 					console.error('[Filter] Failed to fetch edit content.');
+// 				}
+// 				const magic = /<input type="hidden" value="([\s\S][^"]*)"([^>])*>/;
+// 				let result = magic.exec(input);
+// 				if (result !== null) {
+// 					let raw = _.unescape(result[1]);
+// 					raw = raw.replace(/\[(ICODE|CODE)\](.*?)\[\/(ICODE|CODE)\]/gi, '[$1]' + _.escape('$2') + '[/$3]'); // 避免对正常展示性代码的误判。
+// 					raw = raw.replace(/(href|src)="\[URL\](.*?)\[\/URL\]"/gi, '$1="$2"'); // 修复xf自动将href/src值替换为bbcode的URL造成的不匹配。
+// 					raw.match(/(<\w+\s[^>]*>.*?<\/\w+>)/gi)?.forEach(k => {
+// 						console.warn('[Filter] Removed unauthorized HTML tag: ' + k);
+// 						from = from.replace(k, '');
+// 					});
+// 					raw.match(/(<\w+[^(\/|>)]*\/>)/gi)?.forEach(k => {
+// 						console.warn('[Filter] Removed unauthorized HTML tag: ' + k);
+// 						from = from.replace(k, '');
+// 					});
+// 				} else {
+// 					console.error('[Filter] Failed to format edit content.');
+// 				}
+// 				resolve(from);
+// 			})
+// 			.catch(e => reject);
+// 	});
+// }
 
 /**
  *
@@ -191,29 +191,6 @@ function md(jqObject: JQuery<HTMLElement>) {
 			// .catch(e => {
 			// 	console.warn('[XFMD] Failed to filter markdown content.');
 			// });
-	});
-}
-
-/**
- *
- * @param {string} url POST 地址
- * @param {any} data POST 内容
- * @returns JQuery Ajax 对象
- *
- * 进行 POST 请求
- */
-function post(url: string, data: any) {
-	return $.ajax({
-		method: 'POST',
-		url,
-		data
-	});
-}
-
-function get(url: string) {
-	return $.ajax({
-		method: 'GET',
-		url
 	});
 }
 
