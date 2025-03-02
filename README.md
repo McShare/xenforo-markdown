@@ -72,7 +72,7 @@ As dark mode getting popular among websites, xenforo-markdown provides CSS rules
 
 The styles are applied if there's a `.dark` class present in the container element (i.e. `bbWrapper` on some sites). `dark-detection.js` simply listen on the switch element (some "Change Theme" or "Dark Mode" button on your site), determine if the user chooses to enter/leave dark mode and then add/remove `.dark` classes on the target elements accordingly. The code will also be executed once on page load.
 
-This approach per se leads to incompatibility, however. You'll probably need to rewrite some of the logics (e.g. change the switch element selector and the target element selectors) yourself if you want it to work on your own site. And this is not the only means. You can absolutely write your own detection code to add `.dark` classes.
+This approach per se leads to incompatibility, however. You'll probably need to rewrite some of the logics (e.g. change the switch element selector and the target element selectors) yourself if you want it to work on your own site. And this is not the only means. You can absolutely write your own detection code to add the `.dark` class.
 
 ## Pros and Cons
 
