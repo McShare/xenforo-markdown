@@ -63,6 +63,15 @@ npm run build
 - `xf-markdown.min.css` - 压缩后的 CSS 文件，由 `markdown.less` 编译而来
 
 你也可以在 [Action 页面](https://github.com/McShare/xenforo-markdown/actions)下载到每次提交后自动构建的版本。
+
+## 黑暗模式检测 `dark-detection.js`
+
+现在黑暗模式越来越广泛了，xenforo-markdown 也为渲染出来的元素添加了黑暗模式下的外观。
+
+要让元素呈现出黑暗模式的外观，容器元素（也就是一些网站上的 `bbWrapper`）上需要有一个 `dark` 类。`dark-detection.js` 会监听开关元素（网站上可能出现的“切换主题”、“黑暗模式”的按钮等），然后判断用户是进入了黑暗模式，还是从黑暗模式中退出，根据这一点来决定添加或者删除指定元素上的 `dark` 类。
+
+这种方法本身就具有不兼容性。如果想让这些逻辑在你的网页上正确运行，你可能还需要做一些重写，比如修改目标元素的选择器。这种方法也并非唯一，你完全可以编写自己的代码来添加 `dark` 类。
+
 ## 优劣对比
 
 优势
