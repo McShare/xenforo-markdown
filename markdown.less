@@ -2,6 +2,65 @@
 	font-family: Monaco, Menlo, Consolas, 'Roboto Mono', 'Andale Mono', 'Ubuntu Mono', '微软雅黑', monospace;
 }
 
+.__darkmode {
+	blockquote:not(.bbCodeBlock) {
+		border-left-color: #313742;
+		background: #3b414b;
+		border-color: #4d5460;
+	}
+
+	code {
+		background: #3b414b;
+		border-color: #4d5460;
+	}
+
+	th,
+	td {
+		border: 1px solid #4d5460;
+	}
+
+	.bbCodeBlock {
+		display: flow-root;
+		margin: 0.5em 0;
+		background: #2d333d;
+		border: 1px solid #3a424f;
+		border-left: 2px solid #313742;
+		.bbCodeBlock-title {
+			padding: 10px 15px;
+			font-size: 1.2rem;
+			color: #f90;
+			background: #292e37;
+		}
+
+		pre {
+			margin: 0;
+		}
+		
+		.bbCodeBlock-content {
+			position: relative;
+			padding: 12px 15px;
+		}
+	}
+}
+
+.__lightmode {
+	blockquote:not(.bbCodeBlock) {
+		border-left-color: #2175f3;
+		border-color: #d3e1f6;
+		background: #f1f3fb;
+	}
+
+	code {
+		background: #f1f3fb;
+		border-color: #d3e1f6;
+	}
+
+	th,
+	td {
+		border: 1px solid #d3e1f6;
+	}
+}
+
 .xfPreview,
 article.message-body,
 article.resourceBody-main,
@@ -135,61 +194,20 @@ article.resourceBody-main,
 	}
 
 	&.dark {
-		blockquote:not(.bbCodeBlock) {
-			border-left-color: #313742;
-			background: #3b414b;
-			border-color: #4d5460;
-		}
-
-		code {
-			background: #3b414b;
-			border-color: #4d5460;
-		}
-
-		th,
-		td {
-			border: 1px solid #4d5460;
-		}
-
-		.bbCodeBlock {
-			display: flow-root;
-			margin: 0.5em 0;
-			background: #2d333d;
-			border: 1px solid #3a424f;
-			border-left: 2px solid #313742;
-			.bbCodeBlock-title {
-				padding: 10px 15px;
-				font-size: 1.2rem;
-				color: #f90;
-				background: #292e37;
-			}
-
-			pre {
-				margin: 0;
-			}
-			
-			.bbCodeBlock-content {
-				position: relative;
-				padding: 12px 15px;
-			}
-		}
+		.__darkmode;
 	}
 
 	&:not(.dark) {
-		blockquote:not(.bbCodeBlock) {
-			border-left-color: #2175f3;
-			border-color: #d3e1f6;
-			background: #f1f3fb;
+		.__lightmode;
+	}
+
+	&.darkauto {
+		@media (prefers-color-scheme: dark) {
+			.__darkmode;
 		}
 
-		code {
-			background: #f1f3fb;
-			border-color: #d3e1f6;
-		}
-
-		th,
-		td {
-			border: 1px solid #d3e1f6;
+		@media (prefers-color-scheme: light) {
+			.__lightmode;
 		}
 	}
 }
