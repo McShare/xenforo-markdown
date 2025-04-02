@@ -183,9 +183,11 @@ article.resourceBody-main,
 				color: #92d049;
 				background: #f9fafd;
 			}
+
 			pre {
 				margin: 0;
 			}
+
 			.bbCodeBlock-content {
 				position: relative;
 				padding: 12px 15px;
@@ -197,11 +199,11 @@ article.resourceBody-main,
 		.__darkmode;
 	}
 
-	&:not(.dark) {
+	&:not(.dark, .darkauto) {
 		.__lightmode;
 	}
 
-	&.darkauto {
+	&:not(.dark).darkauto {
 		@media (prefers-color-scheme: dark) {
 			.__darkmode;
 		}
@@ -210,6 +212,10 @@ article.resourceBody-main,
 			.__lightmode;
 		}
 	}
+}
+
+pre {
+	overflow: auto;
 }
 
 /* fix for prism bug */
