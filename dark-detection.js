@@ -22,12 +22,14 @@ function __xfmd__addTargetClass(className) {
 	document.querySelector('.xfPreview')?.classList.add(className);
 	document.querySelectorAll('article.message-body').forEach(e => e.classList.add(className));
 	document.querySelectorAll('article.resourceBody-main').forEach(e => e.classList.add(className));
+	document.querySelectorAll('.message-userContent .message-body').forEach(e => e.classList.add(className));
 }
 
 function __xfmd__removeTargetClass(className) {
 	document.querySelector('.xfPreview')?.classList.remove(className);
 	document.querySelectorAll('article.message-body').forEach(e => e.classList.remove(className));
 	document.querySelectorAll('article.resourceBody-main').forEach(e => e.classList.remove(className));
+	document.querySelectorAll('.message-userContent .message-body').forEach(e => e.classList.remove(className));
 }
 
 function __xfmd__applyDarkDetection(indicator) {
