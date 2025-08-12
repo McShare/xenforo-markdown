@@ -4,9 +4,9 @@
 
 .__darkmode {
 	blockquote:not(.bbCodeBlock) {
-		border-left-color: #313742;
 		background: #3b414b;
 		border-color: #4d5460;
+		border-left: 2px solid #313742;
 	}
 
 	code {
@@ -25,6 +25,7 @@
 		background: #2d333d;
 		border: 1px solid #3a424f;
 		border-left: 2px solid #4584e3;
+
 		.bbCodeBlock-title {
 			padding: 10px 15px;
 			font-size: 1.2rem;
@@ -35,7 +36,7 @@
 		pre {
 			margin: 0;
 		}
-		
+
 		.bbCodeBlock-content {
 			position: relative;
 			padding: 12px 15px;
@@ -45,8 +46,8 @@
 
 .__lightmode {
 	blockquote:not(.bbCodeBlock) {
-		border-left-color: #2175f3;
 		border-color: #d3e1f6;
+		border-left: 2px solid #2175f3;
 		background: #f1f3fb;
 	}
 
@@ -61,140 +62,7 @@
 	}
 }
 
-.xfPreview,
-article.message-body,
-article.resourceBody-main,
-.message-userContent blockquote.message-body {
-	.bbWrapper {
-
-		h1,
-		p {
-			&+br {
-				display: none;
-			}
-		}
-
-		p {
-			margin: 16px 0;
-			line-height: 1.5;
-		}
-
-		ul,
-		ol,
-		p {
-			strong {
-				font-weight: bold;
-			}
-		}
-
-		code {
-			margin: 0;
-			font-size: 90%;
-			background: transparent;
-			border: 1px solid transparent;
-			border-radius: 4px;
-			padding-top: 1px;
-			padding-right: 4px;
-			padding-bottom: 1px;
-			padding-left: 4px;
-			.font-code;
-			line-height: 1.4;
-			box-decoration-break: clone;
-			-webkit-box-decoration-break: clone;
-		}
-
-		h1,
-		h2,
-		h3,
-		h4 {
-			margin: 8px 0;
-		}
-
-		h1 {
-			font-size: 26px;
-		}
-
-		h2 {
-			font-size: 24px;
-		}
-
-		h3 {
-			font-size: 20px;
-		}
-
-		h4 {
-			font-size: 16px;
-		}
-
-		em {
-			font-style: italic !important;
-		}
-
-		table {
-			width: 100%;
-			border-collapse: collapse;
-			empty-cells: show;
-			margin: 16px 0;
-
-			th,
-			td {
-				background: transparent;
-				padding: 4px;
-			}
-		}
-
-		ol,
-		ul {
-			padding-left: 20px;
-		}
-
-		pre code {
-			background: transparent !important;
-			border-color: transparent !important;
-		}
-
-		pre {
-			border: 1px solid transparent;
-			padding: 4px;
-		}
-
-		blockquote:not(.bbCodeBlock) {
-			display: flow-root;
-			margin: 0.5em 0;
-			background: transparent;
-			border: 1px solid transparent;
-			border-left: 2px solid transparent;
-			padding: 12px 15px;
-
-			p {
-				margin: 0 !important;
-			}
-		}
-
-		.bbCodeBlock {
-			display: flow-root;
-			margin: 0.5em 0;
-			background: #f1f3fb;
-			border: 1px solid #d3e1f6;
-			border-left: 2px solid #2175f3;
-			.bbCodeBlock-title {
-				padding: 12px 15px;
-				font-size: 1.2rem;
-				color: #92d049;
-				background: #f9fafd;
-			}
-
-			pre {
-				margin: 0;
-			}
-
-			.bbCodeBlock-content {
-				position: relative;
-				padding: 12px 15px;
-			}
-		}
-	}
-
+.xfPreview, article.message-body, article.resourceBody-main, .message-userContent blockquote.message-body, aside.message-signature {
 	&.dark {
 		.__darkmode;
 	}
@@ -210,6 +78,137 @@ article.resourceBody-main,
 
 		@media (prefers-color-scheme: light) {
 			.__lightmode;
+		}
+	}
+}
+
+.xfPreview,
+article.message-body .bbWrapper,
+article.resourceBody-main .bbWrapper,
+.message-userContent blockquote.message-body .bbWrapper,
+aside.message-signature .bbWrapper {
+	h1,
+	p {
+		&+br {
+			display: none;
+		}
+	}
+
+	p {
+		margin: 16px 0;
+		line-height: 1.5;
+	}
+
+	ul,
+	ol,
+	p {
+		strong {
+			font-weight: bold;
+		}
+	}
+
+	code {
+		margin: 0;
+		font-size: 90%;
+		background: transparent;
+		border: 1px solid transparent;
+		border-radius: 4px;
+		padding-top: 1px;
+		padding-right: 4px;
+		padding-bottom: 1px;
+		padding-left: 4px;
+		.font-code;
+		line-height: 1.4;
+		box-decoration-break: clone;
+		-webkit-box-decoration-break: clone;
+	}
+
+	h1,
+	h2,
+	h3,
+	h4 {
+		margin: 8px 0;
+	}
+
+	h1 {
+		font-size: 26px;
+	}
+
+	h2 {
+		font-size: 24px;
+	}
+
+	h3 {
+		font-size: 20px;
+	}
+
+	h4 {
+		font-size: 16px;
+	}
+
+	em {
+		font-style: italic !important;
+	}
+
+	table {
+		width: 100%;
+		border-collapse: collapse;
+		empty-cells: show;
+		margin: 16px 0;
+
+		th,
+		td {
+			background: transparent;
+			padding: 4px;
+		}
+	}
+
+	ol,
+	ul {
+		padding-left: 20px;
+	}
+
+	pre code {
+		background: transparent !important;
+		border-color: transparent !important;
+	}
+
+	pre {
+		border: 1px solid transparent;
+		padding: 4px;
+	}
+
+	blockquote:not(.bbCodeBlock) {
+		display: flow-root;
+		margin: 0.5em 0;
+		padding: 12px 15px;
+
+		p {
+			margin: 0 !important;
+		}
+	}
+
+	.bbCodeBlock {
+		display: flow-root;
+		margin: 0.5em 0;
+		background: #f1f3fb;
+		border: 1px solid #d3e1f6;
+		border-left: 2px solid #2175f3;
+
+		.bbCodeBlock-title {
+			padding: 12px 15px;
+			font-size: 1.2rem;
+			color: #92d049;
+			background: #f9fafd;
+		}
+
+		pre {
+			margin: 0;
+		}
+
+		.bbCodeBlock-content {
+			position: relative;
+			padding: 12px 15px;
 		}
 	}
 }

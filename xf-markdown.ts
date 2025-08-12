@@ -13,6 +13,7 @@ import MarkdownIt from 'markdown-it';
 import _ from 'underscore';
 
 const loc = window.location.href;
+let renderCount = 0;
 const ATTR = {
 	basic: ['id', 'style', 'class', 'role', 'tabindex'],
 	none: [],
@@ -67,7 +68,7 @@ const xssRule: IFilterXSSOptions = {
 };
 const Markdown = new MarkdownIt({
 	linkify: true
-})
+});
 
 /**
  *
@@ -169,9 +170,9 @@ function recoverMD(raw: string) {
  *
  * 将指定元素的纯文本内容替换为转义后的 HTML 同时并入文档。
  */
-function md(jqObject: JQuery<HTMLElement>) {
+function md(jqObject: JQuery<Element>) {
 	let content = jqObject;
-	let html: string, result: string, text: string, el: JQuery<HTMLElement>;
+	let html: string, result: string, text: string, el: JQuery<Element>;
 	content.each((i, e) => {
 		el = $(e);
 		html = el.html();
@@ -179,16 +180,16 @@ function md(jqObject: JQuery<HTMLElement>) {
 		result = getMarkdownResult(html, text).join('');
 		// filterUnauthorizedHtml(result, location.href + 'edit')
 		// 	.then(r => {
-				if (result.trim().length > 0) {
-					el.html(filterXSS(result, xssRule));
-					console.log('[XFMD] Markdown content is successfully rendered.');
-				} else {
-					console.warn('[XFMD] Failed to render markdown content.');
-				}
-			// })
-			// .catch(e => {
-			// 	console.warn('[XFMD] Failed to filter markdown content.');
-			// });
+		if (result.trim().length > 0) {
+			el.html(filterXSS(result, xssRule));
+			renderCount++;
+		} else {
+			console.warn('[XFMD] Failed to render markdown content.');
+		}
+		// })
+		// .catch(e => {
+		// 	console.warn('[XFMD] Failed to filter markdown content.');
+		// });
 	});
 }
 
@@ -197,7 +198,7 @@ function md(jqObject: JQuery<HTMLElement>) {
  *
  * @param {JQuery} targetJq 所要操作的元素的 JQuery 对象
  */
-function convertRawPreCode(targetJq: JQuery<HTMLElement>) {
+function convertRawPreCode(targetJq: JQuery<Element>) {
 	targetJq.each((i, e) => {
 		$(e).html(
 			$(e)
@@ -209,7 +210,24 @@ function convertRawPreCode(targetJq: JQuery<HTMLElement>) {
 	Prism.highlightAllUnder(targetJq[0]);
 }
 
+function getClassnameFromDarkIndicator(indicator: HTMLElement | null = null) {
+	if (indicator === null) {
+		indicator = document.querySelector("a[class*='js-styleVariationsLink']");
+	}
+
+	if (indicator === null) return '';
+
+	if (indicator.innerHTML.includes('fa-moon')) {
+		return 'dark';
+	} else if (indicator.innerHTML.includes('fa-adjust')) {
+		return 'darkauto';
+	}
+
+	return '';
+}
+
 function main() {
+	console.time('xfmd-render');
 	// get('/css.php?css=public:bb_code.less&s=51&l=2').done(a => {
 	// 	let style = document.createElement('style');
 	// 	style.innerText = a;
@@ -217,9 +235,9 @@ function main() {
 	// 	document.head.appendChild(style);
 	// });
 
-	let targetEls: NodeListOf<HTMLElement> | null = null;
+	let targetEls: ArrayLike<Element> | null = null;
 	if (loc.includes('threads/')) {
-		targetEls = document.querySelectorAll('article.message-body .bbWrapper');
+		targetEls = [...Array.from(document.querySelectorAll('article.message-body .bbWrapper')), ...Array.from(document.querySelectorAll('aside.message-signature .bbWrapper'))];
 	}
 
 	if (loc.includes('pages/how-2-ask')) {
@@ -230,20 +248,24 @@ function main() {
 		// for resource updates page
 		// Pattern: /resources/xyz/updates
 		if (loc.includes('/updates')) {
-			targetEls = document.querySelectorAll('.message-userContent .bbWrapper')
+			targetEls = document.querySelectorAll('.message-userContent .bbWrapper');
 		} else {
 			targetEls = document.querySelectorAll('.resourceBody .bbWrapper');
 		}
 	}
 
+	if (loc.includes('direct-messages/')) {
+		targetEls = document.querySelectorAll('.message-userContent .bbWrapper');
+	}
+
 	if (targetEls !== null) {
-		targetEls.forEach(e => {
+		Array.from(targetEls).forEach(e => {
 			md($(e));
 			convertRawPreCode($(e));
 		});
 	}
 
-	if (loc.includes('post-thread') || loc.includes('threads/') || loc.includes('/edit') || loc.includes('resources/')) {
+	if (loc.includes('post-thread') || loc.includes('threads/') || loc.includes('/edit') || loc.includes('resources/') || loc.includes('direct-messages/')) {
 		let styleObserver = new MutationObserver(mutations => {
 			mutations.forEach(r => {
 				let tg = r.target as HTMLElement;
@@ -274,7 +296,11 @@ function main() {
 						}
 					}
 				}
+
 				if (r.addedNodes.length === 0) return;
+
+				// 自动转换新增的节点中可能含有的markdown内容
+
 				for (let i = 0; i < r.addedNodes.length; i++) {
 					let updatedNode = r.addedNodes[i] as HTMLElement;
 					if (updatedNode.getAttribute) {
@@ -287,10 +313,27 @@ function main() {
 								attributeFilter: ['style']
 							});
 						}
-						if (classNames.includes('message') && classNames.includes('message--post')) {
-							let tgChild = updatedNode.querySelector('article.message-body .bbWrapper');
-							if (tgChild !== null) {
-								let el = $(tgChild) as JQuery<HTMLElement>;
+
+						// 判定是否为可能包含新增用户内容的节点
+
+						if (
+							classNames.includes('message') &&
+							(classNames.includes('message--post') || // 发帖页面
+								className.includes('message--conversationMessage')) // 会话页面
+						) {
+							let tgContentWrapper = updatedNode.querySelector('article.message-body');
+
+							const darkClassname = getClassnameFromDarkIndicator();
+
+							console.log(`[XFMD] Rendered new item added at ${new Date().toLocaleString()}`)
+
+							if (darkClassname !== '' && tgContentWrapper !== null) {
+								tgContentWrapper.classList.add(darkClassname);
+							}
+
+							let tgContent = updatedNode.querySelector('article.message-body .bbWrapper');
+							if (tgContent !== null) {
+								let el = $(tgContent) as JQuery<HTMLElement>;
 								md(el);
 								convertRawPreCode(el);
 							}
@@ -300,13 +343,16 @@ function main() {
 			});
 		});
 
-		observer.observe(loc.includes('threads/') ? (document.querySelector('.p-body-pageContent') as Node) : document.body, {
+		observer.observe(loc.includes('threads/') || loc.includes('direct-messages/') ? (document.querySelector('.p-body-pageContent') as Node) : document.body, {
 			childList: true,
 			subtree: true,
 			attributes: false,
 			characterData: false
 		});
 	}
+
+	console.timeLog('xfmd-render', `${renderCount} items.`);
+	console.timeEnd('xfmd-render');
 }
 
 $(() => main());

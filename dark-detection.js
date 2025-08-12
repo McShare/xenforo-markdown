@@ -18,18 +18,18 @@ function waitFor(selector) {
 	});
 }
 
+const __xfmd_darkdetect_targets = ['.xfPreview', 'article.message-body', 'article.resourceBody-main', '.message-userContent .message-body', 'aside.message-signature'];
+
 function __xfmd__addTargetClass(className) {
-	document.querySelector('.xfPreview')?.classList.add(className);
-	document.querySelectorAll('article.message-body').forEach(e => e.classList.add(className));
-	document.querySelectorAll('article.resourceBody-main').forEach(e => e.classList.add(className));
-	document.querySelectorAll('.message-userContent .message-body').forEach(e => e.classList.add(className));
+	__xfmd_darkdetect_targets.forEach(selector => {
+		document.querySelectorAll(selector).forEach(e => e.classList.add(className));
+	});
 }
 
 function __xfmd__removeTargetClass(className) {
-	document.querySelector('.xfPreview')?.classList.remove(className);
-	document.querySelectorAll('article.message-body').forEach(e => e.classList.remove(className));
-	document.querySelectorAll('article.resourceBody-main').forEach(e => e.classList.remove(className));
-	document.querySelectorAll('.message-userContent .message-body').forEach(e => e.classList.remove(className));
+	__xfmd_darkdetect_targets.forEach(selector => {
+		document.querySelectorAll(selector).forEach(e => e.classList.remove(className));
+	});
 }
 
 function __xfmd__applyDarkDetection(indicator) {
@@ -48,7 +48,7 @@ function __xfmd__applyDarkDetection(indicator) {
 
 document.addEventListener('DOMContentLoaded', () => {
 	waitFor("a[class*='js-styleVariationsLink']").then(() => {
-		console.log('Detecting dark mode...');
+		console.log('[XFMD] Detecting dark mode...');
 		const __darkIndicator = document.querySelector("a[class*='js-styleVariationsLink']");
 		if (__darkIndicator !== null) {
 			__xfmd__applyDarkDetection(__darkIndicator);
