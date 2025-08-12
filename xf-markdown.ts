@@ -352,7 +352,6 @@ function main() {
 	}
 
 	console.timeLog('xfmd-render', `${renderCount} items.`);
-	console.timeEnd('xfmd-render');
 }
 
 $(() => main());
