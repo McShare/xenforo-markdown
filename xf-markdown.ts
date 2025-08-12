@@ -351,7 +351,9 @@ function main() {
 		});
 	}
 
-	console.timeLog('xfmd-render', `${renderCount} items.`);
+	if (renderCount > 0) {
+		console.timeLog('xfmd-render', `${renderCount} items.`);
+	}
 }
 
 $(() => main());
