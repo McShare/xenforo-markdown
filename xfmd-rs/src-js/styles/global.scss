@@ -1,0 +1,44 @@
+@use './colors';
+@use './typography';
+
+.xfPreview,
+article.message-body,
+article.resourceBody-main,
+.message-userContent blockquote.message-body,
+aside.message-signature {
+	&.dark:not(.darkauto) {
+		.bbWrapper,
+		& {
+			@include colors.Dark;
+		}
+	}
+
+	&:not(.dark, .darkauto) {
+
+		.bbWrapper,
+		& {
+			@include colors.Light;
+		}
+	}
+
+	&:not(.dark).darkauto {
+		.bbWrapper,
+		& {
+			@media (prefers-color-scheme: dark) {
+				@include colors.Dark;
+			}
+
+			@media (prefers-color-scheme: light) {
+				@include colors.Light;
+			}
+		}
+	}
+}
+
+.xfPreview,
+article.message-body .bbWrapper,
+article.resourceBody-main .bbWrapper,
+.message-userContent blockquote.message-body .bbWrapper,
+aside.message-signature .bbWrapper {
+	@include typography.Typo;
+}
