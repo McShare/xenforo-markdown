@@ -49,6 +49,8 @@ module.exports = {
         minimizer: [
             new CssMinimizerPlugin()
         ],
-        minimize: true
+    },
+    devServer: {
+        static: './dist'
     }
 };
