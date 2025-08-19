@@ -52,7 +52,8 @@
 </main>
 </body>
 <script>
-    const testMarkdown = `# h1 Heading 8-)
+    const testMarkdown = `[MD]
+# h1 Heading 8-)
 ## h2 Heading
 ### h3 Heading
 #### h4 Heading
@@ -284,15 +285,19 @@ It converts "HTML", but keep intact partial entries like "xxxHTMLyyy" and so on.
 
 ::: warning
 *here be dragons*
-:::`;
-    const article =document.createElement('article');
+:::
+[/MD]`;
+    const article = document.createElement('article');
     article.classList.add('message-body');
     const wrapper = document.createElement('div');
     wrapper.classList.add('bbWrapper');
     const paragraph = document.createElement('p');
-    paragraph.innerText=testMarkdown;
+    paragraph.innerHTML = testMarkdown;
     wrapper.appendChild(paragraph);
     article.appendChild(wrapper)
-    document.getElementById('posts').appendChild(article);
+
+    for (let i = 0; i < 400; i++) {
+        document.getElementById('posts').appendChild(article.cloneNode(true));
+    }
 </script>
 </html>

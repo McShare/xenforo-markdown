@@ -17,7 +17,8 @@ module.exports = {
             template: './src-js/index.html'
         }),
         new WasmPackPlugin({
-            crateDirectory: __dirname
+            crateDirectory: __dirname,
+            outDir: './src-js/pkg'
         }),
         new MiniCssExtractPlugin(),
     ],
