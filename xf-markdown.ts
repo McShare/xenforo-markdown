@@ -227,7 +227,7 @@ function getClassnameFromDarkIndicator(indicator: HTMLElement | null = null) {
 }
 
 function main() {
-	console.time('xfmd-render');
+	const startTime = new Date().getTime();
 	// get('/css.php?css=public:bb_code.less&s=51&l=2').done(a => {
 	// 	let style = document.createElement('style');
 	// 	style.innerText = a;
@@ -325,7 +325,7 @@ function main() {
 
 							const darkClassname = getClassnameFromDarkIndicator();
 
-							console.log(`[XFMD] Rendered new item added at ${new Date().toLocaleString()}`)
+							console.log(`[XFMD] Rendered new item added at ${new Date().toLocaleString()}`);
 
 							if (darkClassname !== '' && tgContentWrapper !== null) {
 								tgContentWrapper.classList.add(darkClassname);
@@ -343,16 +343,21 @@ function main() {
 			});
 		});
 
-		observer.observe(loc.includes('threads/') || loc.includes('direct-messages/') ? (document.querySelector('.p-body-pageContent') as Node) : document.body, {
-			childList: true,
-			subtree: true,
-			attributes: false,
-			characterData: false
-		});
+		const observeTarget = loc.includes('threads/') || loc.includes('direct-messages/') ? (document.querySelector('.p-body-pageContent') as Node) : document.body;
+
+		if (observeTarget)
+			observer.observe(observeTarget, {
+				childList: true,
+				subtree: true,
+				attributes: false,
+				characterData: false
+			});
 	}
 
+	const endTime = new Date().getTime();
+
 	if (renderCount > 0) {
-		console.timeLog('xfmd-render', `${renderCount} items.`);
+		console.log(`Took ${endTime-startTime}ms rendering ${renderCount} items.`);
 	}
 }
 
