@@ -245,10 +245,14 @@ function main() {
 	}
 
 	if (loc.includes('resources/')) {
-		// for resource updates page
-		// Pattern: /resources/xyz/updates
 		if (loc.includes('/updates')) {
+			// for resource updates page
+			// Pattern: /resources/xyz/updates
 			targetEls = document.querySelectorAll('.message-userContent .bbWrapper');
+		} else if (loc.includes('/extra')) {
+			// for English introduction page
+			// Pattern: /resources/xyz/extra
+			targetEls = document.querySelectorAll('.p-body-pageContent .block-body.block-row .bbWrapper');
 		} else {
 			targetEls = document.querySelectorAll('.resourceBody .bbWrapper');
 		}
@@ -257,6 +261,8 @@ function main() {
 	if (loc.includes('direct-messages/')) {
 		targetEls = document.querySelectorAll('.message-userContent .bbWrapper');
 	}
+
+
 
 	if (targetEls !== null) {
 		Array.from(targetEls).forEach(e => {
