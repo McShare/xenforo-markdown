@@ -291,14 +291,16 @@ function main() {
 						let className = tg.getAttribute('class');
 						if (className === null) return;
 						if (className.includes('message-cell message-cell--main is-editing')) {
-							let tgChild = tg.querySelector('article.message-body .bbWrapper');
-							if (tgChild !== null) {
-								let el = $(tgChild) as JQuery<HTMLElement>;
-								if (el.text().includes('[MD]') && el.text().includes('[/MD]')) {
-									md(el);
-									convertRawPreCode(el);
+							let tgChilds = [tg.querySelector('article.message-body .bbWrapper'), tg.querySelector('aside.message-signature .bbWrapper') ];
+							tgChilds.forEach(tgChild => {
+								if (tgChild !== null) {
+									let el = $(tgChild) as JQuery<HTMLElement>;
+									if (el.text().includes('[MD]') && el.text().includes('[/MD]')) {
+										md(el);
+										convertRawPreCode(el);
+									}
 								}
-							}
+							})
 						}
 					}
 				}
@@ -337,12 +339,14 @@ function main() {
 								tgContentWrapper.classList.add(darkClassname);
 							}
 
-							let tgContent = updatedNode.querySelector('article.message-body .bbWrapper');
-							if (tgContent !== null) {
-								let el = $(tgContent) as JQuery<HTMLElement>;
-								md(el);
-								convertRawPreCode(el);
-							}
+							let tgContents = [updatedNode.querySelector('article.message-body .bbWrapper'), updatedNode.querySelector('aside.message-signature .bbWrapper')];
+							tgContents.forEach(tgContent => {
+								if (tgContent !== null) {
+									let el = $(tgContent) as JQuery<HTMLElement>;
+									md(el);
+									convertRawPreCode(el);
+								}
+							});
 						}
 					}
 				}
