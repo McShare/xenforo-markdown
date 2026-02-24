@@ -87,6 +87,14 @@ const Markdown = new MarkdownIt({
 	linkify: true
 });
 
+function isValidHtmlTag(input: string) {
+	try {
+		return document.createElement(input).constructor.name !== 'HTMLUnknownElement';
+	} catch (e) {
+		return false;
+	}
+}
+
 /**
  *
  * @param {string} from 输入文本
@@ -304,6 +312,26 @@ function removeMarkdownTables(markdown: string) {
 	return result.join('\n');
 }
 
+function protectNonHtmlLtGt(text: string) {
+	const ltgtRegex = /<(.*?)>/g;
+	let m;
+
+	while ((m = ltgtRegex.exec(text)) !== null) {
+		if (m.index === ltgtRegex.lastIndex) {
+			ltgtRegex.lastIndex++;
+		}
+		if (!isValidHtmlTag(m[1])) {
+			text = text.replace(m[0], `&lt;${m[1]}&gt;`);
+		}
+	}
+
+	return text;
+}
+
+function recoverLtGt(text: string) {
+	return text.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+}
+
 function addColorSchemeClass(el: Element | null) {
 	if (!window.__xfmd_color_scheme || !el) return;
 
@@ -358,7 +386,9 @@ function main() {
 			// console.log(
 			// 	`debug remove markdown:\n--- before ---\n${digest.textContent}\n--- after ---\n${removeMarkdownTables(removeMd(digest.textContent))}`
 			// );
-			digest.innerText = removeMarkdownTables(removeMd(digest.textContent))
+			digest.innerText = removeMarkdownTables(
+				recoverLtGt(removeMd(protectNonHtmlLtGt(digest.textContent)))
+			)
 				.replace(/\n/g, ' ')
 				.replace(/\[\/?MD\]/g, '');
 		});
@@ -440,9 +470,8 @@ function main() {
 							(classNames.includes('message--post') || // 发帖页面
 								className.includes('message--conversationMessage')) // 会话页面
 						) {
-							let tgContentWrapper = updatedNode.querySelector(
-								'article.message-body'
-							);
+							let tgContentWrapper =
+								updatedNode.querySelector('article.message-body');
 
 							console.log(
 								`[XFMD] Rendered new item at ${new Date().toLocaleString()}`
