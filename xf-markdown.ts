@@ -8,7 +8,6 @@
 
 import { escapeAttrValue, IFilterXSSOptions } from 'xss';
 import Prism from 'prismjs';
-import $ from 'jquery';
 import MarkdownIt from 'markdown-it';
 import _ from 'underscore';
 import removeMd from 'remove-markdown';
@@ -20,7 +19,7 @@ declare global {
 }
 
 const loc = window.location.href;
-let renderCount = 0;
+let renderedCount = 0;
 const ATTR = {
 	basic: ['id', 'style', 'class', 'role', 'tabindex'],
 	none: [],
@@ -100,43 +99,6 @@ function removeFirstReturn(from: string) {
 
 /**
  *
- * @param from 已解析 Markdown 的 HTML
- * @param prefix 对应帖子的 ID
- * @returns 过滤用户输入标签的已解析 HTML
- */
-// function filterUnauthorizedHtml(from: string, editURL: string) {
-// 	return new Promise<string>((resolve, reject) => {
-// 		get(editURL)
-// 			.done(r => {
-// 				let input = r;
-// 				if (!input) {
-// 					console.error('[Filter] Failed to fetch edit content.');
-// 				}
-// 				const magic = /<input type="hidden" value="([\s\S][^"]*)"([^>])*>/;
-// 				let result = magic.exec(input);
-// 				if (result !== null) {
-// 					let raw = _.unescape(result[1]);
-// 					raw = raw.replace(/\[(ICODE|CODE)\](.*?)\[\/(ICODE|CODE)\]/gi, '[$1]' + _.escape('$2') + '[/$3]'); // 避免对正常展示性代码的误判。
-// 					raw = raw.replace(/(href|src)="\[URL\](.*?)\[\/URL\]"/gi, '$1="$2"'); // 修复xf自动将href/src值替换为bbcode的URL造成的不匹配。
-// 					raw.match(/(<\w+\s[^>]*>.*?<\/\w+>)/gi)?.forEach(k => {
-// 						console.warn('[Filter] Removed unauthorized HTML tag: ' + k);
-// 						from = from.replace(k, '');
-// 					});
-// 					raw.match(/(<\w+[^(\/|>)]*\/>)/gi)?.forEach(k => {
-// 						console.warn('[Filter] Removed unauthorized HTML tag: ' + k);
-// 						from = from.replace(k, '');
-// 					});
-// 				} else {
-// 					console.error('[Filter] Failed to format edit content.');
-// 				}
-// 				resolve(from);
-// 			})
-// 			.catch(e => reject);
-// 	});
-// }
-
-/**
- *
  * @param {string} rawHtml 原 HTML 完整内容
  * @param {string} rawText 原纯文本完整内容
  * @returns 解析后的 HTML 纯文本
@@ -185,55 +147,39 @@ function recoverMD(raw: string) {
 }
 
 /**
- *
- * @param {JQuery} jqObject Markdown 文本所在元素的 JQuery 对象
- *
  * 将指定元素的纯文本内容替换为转义后的 HTML 同时并入文档。
+ * @param {Element} e Markdown 文本所在元素
  */
-function md(jqObject: JQuery<Element>) {
-	let content = jqObject;
-	let html: string, result: string, text: string, el: JQuery<Element>;
-	content.each((i, e) => {
-		el = $(e);
-		html = el.html();
-		text = el.text();
-		result = getMarkdownResult(html, text).join('');
-		// filterUnauthorizedHtml(result, location.href + 'edit')
-		// 	.then(r => {
-		if (result.trim().length > 0) {
-			el.html(filterXSS(result, xssRule));
-			renderCount++;
-		} else {
-			console.warn('[XFMD] Failed to render markdown content.');
-		}
-		// })
-		// .catch(e => {
-		// 	console.warn('[XFMD] Failed to filter markdown content.');
-		// });
-	});
+function md(e: Element) {
+	if (!e.textContent.includes('[MD]')) return;
+
+	let result = getMarkdownResult(e.innerHTML, e.textContent).join('');
+	if (result.trim().length > 0) {
+		e.innerHTML = filterXSS(result, xssRule);
+		renderedCount++;
+	} else {
+		console.warn('[XFMD] Failed to render markdown content.');
+	}
 }
 
 /**
- * 将指定 JQuery 对象中的未格式化纯代码替换为论坛自带的代码格式，并使用 Prism 高亮化
- *
- * @param {JQuery} targetJq 所要操作的元素的 JQuery 对象
+ * 将未格式化的纯代码替换为论坛自带的代码格式，并使用 Prism 高亮化
+ * @param e 目标元素
  */
-function convertRawPreCode(targetJq: JQuery<Element>) {
-	targetJq.each((i, e) => {
-		$(e).html(
-			$(e)
-				.html()
-				.replace(
-					/<pre(.*?)class="(\w+)"(.*?)data-lang="(\w+)"(.*?)><code>((.|\n)*?)<\/code><\/pre>/g,
-					`<pre$1class="$2 language-$4"$3data-lang="$4"$5><code class="language-$4">$6</code></pre>`
-				)
-				.replace(
-					/<pre><code class=".*?language-(\w+).*?">((.|\n)*?)<\/code><\/pre>/g,
-					`<div class="bbCodeBlock bbCodeBlock--screenLimited bbCodeBlock--code"><div class="bbCodeBlock-title">$1:</div><div class="bbCodeBlock-content"><pre class="bbCodeCode line-numbers language-$1"><code class="language-$1">$2</code></pre></div></div>`
-				)
+function convertRawPreCode(e: Element) {
+	if (!e.innerHTML.includes('pre')) return;
+	e.innerHTML = e.innerHTML
+		.replace(
+			/<pre(.*?)class="(\w+)"(.*?)data-lang="(\w+)"(.*?)><code>((.|\n)*?)<\/code><\/pre>/g,
+			`<pre$1class="$2 language-$4"$3data-lang="$4"$5><code class="language-$4">$6</code></pre>`
+		)
+		.replace(
+			/<pre><code class=".*?language-(\w+).*?">((.|\n)*?)<\/code><\/pre>/g,
+			`<div class="bbCodeBlock bbCodeBlock--screenLimited bbCodeBlock--code"><div class="bbCodeBlock-title">$1:</div><div class="bbCodeBlock-content"><pre class="bbCodeCode line-numbers language-$1"><code class="language-$1">$2</code></pre></div></div>`
 		);
+	e.querySelectorAll('pre').forEach(preElement => {
+		Prism.highlightElement(preElement);
 	});
-	Prism.highlightAllUnder(targetJq[0]);
 }
 
 /**
@@ -304,6 +250,14 @@ function removeMarkdownTables(markdown: string) {
 	return result.join('\n');
 }
 
+/**
+ * 根据当前识别的页面色彩模式，为el添加相应的类
+ * - dark模式下添加.dark
+ * - 自动模式下添加.darkauto
+ * - light模式下不添加
+ * @param el 元素
+ * @returns 无
+ */
 function addColorSchemeClass(el: Element | null) {
 	if (!window.__xfmd_color_scheme || !el) return;
 
@@ -366,8 +320,8 @@ function main() {
 
 	if (targetEls !== null) {
 		Array.from(targetEls).forEach(e => {
-			md($(e));
-			convertRawPreCode($(e));
+			md(e);
+			convertRawPreCode(e);
 		});
 	}
 
@@ -382,10 +336,12 @@ function main() {
 			mutations.forEach(r => {
 				let tg = r.target as HTMLElement;
 				if (tg.style.display === '') {
-					let el = $('.xfPreview');
-					addColorSchemeClass(document.querySelector('.xfPreview'));
-					md(el);
-					convertRawPreCode(el);
+					let el = document.querySelector('.xfPreview');
+					if (el) {
+						addColorSchemeClass(el);
+						md(el);
+						convertRawPreCode(el);
+					}
 				}
 			});
 		});
@@ -398,18 +354,15 @@ function main() {
 						let className = tg.getAttribute('class');
 						if (className === null) return;
 						if (className.includes('message-cell message-cell--main is-editing')) {
-							let tgChilds = [
+							let targets = [
 								tg.querySelector('article.message-body .bbWrapper'),
 								tg.querySelector('aside.message-signature .bbWrapper')
 							];
-							tgChilds.forEach(tgChild => {
-								if (tgChild !== null) {
-									let el = $(tgChild) as JQuery<HTMLElement>;
-									if (el.text().includes('[MD]') && el.text().includes('[/MD]')) {
-										addColorSchemeClass(tgChild);
-										md(el);
-										convertRawPreCode(el);
-									}
+							targets.forEach(target => {
+								if (target !== null) {
+									addColorSchemeClass(target);
+									md(target);
+									convertRawPreCode(target);
 								}
 							});
 						}
@@ -426,6 +379,7 @@ function main() {
 						let className = updatedNode.getAttribute('class');
 						if (className === null) continue;
 						let classNames = className.split(' ');
+						
 						if (classNames.includes('xfPreview')) {
 							styleObserver.observe(updatedNode, {
 								attributes: true,
@@ -435,14 +389,16 @@ function main() {
 
 						// 判定是否为可能包含新增用户内容的节点
 
+						console.log(classNames);
+
 						if (
-							classNames.includes('message') &&
-							(classNames.includes('message--post') || // 发帖页面
-								className.includes('message--conversationMessage')) // 会话页面
+							classNames.includes('message--post') ||
+							classNames.includes('message--conversationMessage') ||
+							classNames.includes('message') ||
+							classNames.includes('message-main')
 						) {
-							let tgContentWrapper = updatedNode.querySelector(
-								'article.message-body'
-							);
+							let tgContentWrapper =
+								updatedNode.querySelector('article.message-body');
 
 							console.log(
 								`[XFMD] Rendered new item at ${new Date().toLocaleString()}`
@@ -452,16 +408,15 @@ function main() {
 								addColorSchemeClass(tgContentWrapper);
 							}
 
-							let tgContents = [
+							let targets = [
 								updatedNode.querySelector('article.message-body .bbWrapper'),
 								updatedNode.querySelector('aside.message-signature .bbWrapper')
 							];
 
-							tgContents.forEach(tgContent => {
-								if (tgContent !== null) {
-									let el = $(tgContent) as JQuery<HTMLElement>;
-									md(el);
-									convertRawPreCode(el);
+							targets.forEach(target => {
+								if (target !== null) {
+									md(target);
+									convertRawPreCode(target);
 								}
 							});
 						}
@@ -486,9 +441,11 @@ function main() {
 
 	const endTime = Date.now();
 
-	if (renderCount > 0) {
-		console.log(`Took ${endTime - startTime}ms rendering ${renderCount} items.`);
+	if (renderedCount > 0) {
+		console.log(`Took ${endTime - startTime}ms rendering ${renderedCount} item(s).`);
 	}
 }
 
-$(() => main());
+document.addEventListener('DOMContentLoaded', () => {
+	main();
+});
