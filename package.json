@@ -4,7 +4,8 @@
   "description": "Simple alternative implementation of Markdown in XenForo",
   "main": "xf-markdown.ts",
   "scripts": {
-    "build": "node ./build.mjs && lessc markdown.less --clean-css='--s1 --advanced --compatibility=*' > dist/markdown.min.css"
+    "build": "node ./build.mjs && lessc markdown.less --clean-css='--s1 --advanced --compatibility=*' > dist/markdown.min.css",
+    "watch": "node ./watch.mjs"
   },
   "repository": {
     "type": "git",

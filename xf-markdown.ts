@@ -13,6 +13,12 @@ import MarkdownIt from 'markdown-it';
 import _ from 'underscore';
 import removeMd from 'remove-markdown';
 
+declare global {
+	interface Window {
+		__xfmd_color_scheme?: 'dark' | 'light' | 'auto';
+	}
+}
+
 const loc = window.location.href;
 let renderCount = 0;
 const ATTR = {
@@ -230,28 +236,12 @@ function convertRawPreCode(targetJq: JQuery<Element>) {
 	Prism.highlightAllUnder(targetJq[0]);
 }
 
-function getClassnameFromDarkIndicator(indicator: HTMLElement | null = null) {
-	if (indicator === null) {
-		indicator = document.querySelector("a[class*='js-styleVariationsLink']");
-	}
-
-	if (indicator === null) return '';
-
-	if (indicator.innerHTML.includes('fa-moon')) {
-		return 'dark';
-	} else if (indicator.innerHTML.includes('fa-adjust')) {
-		return 'darkauto';
-	}
-
-	return '';
-}
-
 /**
  * 移除 Markdown 文本中的所有表格格式，将表格转换为纯文本。
  * 表格中的单元格之间用单个空格分隔，表格分隔线被忽略，非表格行保持不变。
  *
  * @param {string} markdown - 完整的 Markdown 文本
- * @returns {string} 处理后的纯文本
+ * @returns 处理后的纯文本
  */
 function removeMarkdownTables(markdown: string) {
 	if (typeof markdown !== 'string') return '';
@@ -313,6 +303,17 @@ function removeMarkdownTables(markdown: string) {
 
 	return result.join('\n');
 }
+
+function addColorSchemeClass(el: Element | null) {
+	if (!window.__xfmd_color_scheme || !el) return;
+
+	if (window.__xfmd_color_scheme === 'dark') {
+		el.classList.add('dark');
+	} else if (window.__xfmd_color_scheme === 'auto') {
+		el.classList.add('darkauto');
+	}
+}
+
 function main() {
 	const startTime = Date.now();
 
@@ -382,10 +383,7 @@ function main() {
 				let tg = r.target as HTMLElement;
 				if (tg.style.display === '') {
 					let el = $('.xfPreview');
-					// @ts-ignore
-					if (window.__xfmd_color_scheme === 'dark') {
-						el.addClass('dark');
-					}
+					addColorSchemeClass(document.querySelector('.xfPreview'));
 					md(el);
 					convertRawPreCode(el);
 				}
@@ -408,10 +406,7 @@ function main() {
 								if (tgChild !== null) {
 									let el = $(tgChild) as JQuery<HTMLElement>;
 									if (el.text().includes('[MD]') && el.text().includes('[/MD]')) {
-										// @ts-ignore
-										if (window.__xfmd_color_scheme === 'dark') {
-											el.addClass('dark');
-										}
+										addColorSchemeClass(tgChild);
 										md(el);
 										convertRawPreCode(el);
 									}
@@ -445,23 +440,23 @@ function main() {
 							(classNames.includes('message--post') || // 发帖页面
 								className.includes('message--conversationMessage')) // 会话页面
 						) {
-							let tgContentWrapper =
-								updatedNode.querySelector('article.message-body');
-
-							const darkClassname = getClassnameFromDarkIndicator();
-
-							console.log(
-								`[XFMD] Rendered new item added at ${new Date().toLocaleString()}`
+							let tgContentWrapper = updatedNode.querySelector(
+								'article.message-body'
 							);
 
-							if (darkClassname !== '' && tgContentWrapper !== null) {
-								tgContentWrapper.classList.add(darkClassname);
+							console.log(
+								`[XFMD] Rendered new item at ${new Date().toLocaleString()}`
+							);
+
+							if (tgContentWrapper !== null) {
+								addColorSchemeClass(tgContentWrapper);
 							}
 
 							let tgContents = [
 								updatedNode.querySelector('article.message-body .bbWrapper'),
 								updatedNode.querySelector('aside.message-signature .bbWrapper')
 							];
+
 							tgContents.forEach(tgContent => {
 								if (tgContent !== null) {
 									let el = $(tgContent) as JQuery<HTMLElement>;
