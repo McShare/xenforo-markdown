@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "target": "ES2015",
-    "module": "AMD",  
+    "module": "es2015", 
+    "moduleResolution": "bundler", 
     "lib": ["ES2016", "DOM"],
-    "outFile": "dist/xf-markdown.js",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
