@@ -1,22 +1,22 @@
-# Important Notes
+# 注意事项
 
-English | [简体中文](./important-notes.zh.md)
+[English](./important-notes.en.md) | 简体中文
 
-There is no native support for Markdown in XenForo and there is no plugin written with API provided by XenForo, thus making the idea of `xenforo-markdown` possible. It is an *alternative* approach to make it possible for your users to *use* Markdown, **but absolutely not in an elegant way.**
+在 XenForo 平台上，并没有对 Markdown 的原生支持，也没有用 API 写成的类似插件，所以 xenforo-markdown 诞生了。xenforo-markdown 作为一种另类的方式，能让你的用户用上 Markdown，**但实现起来绝对没有那么优雅。**
 
-That is, though `xenforo-markdown` provides the feature of rendering markdown text *correctly* (most of the time), the technique behind it may be really a mess. You could feel this through the speed of rendering, stability, bugs, etc.
+也就是说，尽管 xenforo-markdown 可以把 Markdown 文本（大多数时候）正确地渲染出来，背后的原理可能是一团乱麻。你也可以通过日常渲染的速度、稳定性、漏洞等方面感受到这一点。
 
-Thus, it is obviously really necessary to give you some important notes, in order to back you up for the **consequences**.
+因而很显然也很有必要在这里给出注意事项，从而让你能够提前为某些后果做好心理准备。
 
-`xenforo-markdown` will **not** cause data loss, as everything is processed in the front-end.
+xenforo-markdown **不会**导致数据的丢失，因为一切操作都是在前端进行的，这一点可以放心。
 
-- **You may be using it forever.** It is a must for the users to surround their content in Markdown with `[MD]` note. What if you decide not to use the plugin anymore? All the content will show in their original way. This could be really ugly and scary when someone new drops by your forum and see people communicating in a strange way *if most of your users focus on Markdown*.
-- **Do not use `[MD]` if you are not going to actually write Markdown.** This is due to the render method. You should only use `[MD][/MD]` to surround your content (must not be empty) as other usages could lead to a mess in your post. If you really need this to make something e.g. examples, you should always mention it by escaping the bracket, like this: `\[MD\]` or  `\[/MD\]`.
-- **Many parts of the program is dedicated to [MineBBS](https://minebbs.com).** Sadly this is not planned to be fixed soon. And this makes it quite necessary for you to modify some of the parts to make it work on your site. The parts are:
-  - Pages on which rendering is enabled - only render when location includes `thread/`, `resource/`, etc.
-  - Styles - based on what theme MineBBS is using.
-  - Target element class - based on what theme MineBBS is using. E.g. `.bbWrapper` stands for user content container.
-  - More in `xf-markdown.ts`.
-- **To be continued.**
+- **可能你要永远用下去。** 所有的内容都必须用 `[MD]` 包裹，但万一你不打算继续用这个插件了呢？所有的内容都会现出原形来。*如果你的大部分用户都很爱用 Markdown 的话*，这些裸露的内容对于新人来说无疑是很诡异的景象。
+- **不是要写 Markdown 的话就不要把 `[MD]` 搬出来。** 这是渲染方式所导致的一项要求。`[MD][/MD]` 只能用来包你的内容（不能是空的），任何其它的用法都有可能把你的内容搞乱。如果你确实要用这东西做点什么，比如说举些例子，请确保用转义来避免麻烦，例如这样写：`\[MD\]` 或  `\[/MD\]`。
+- **许多内容是 [MineBBS](https://minebbs.com) 定制的。** 然而短期内并没有修复这一点的打算。这导致如果要在你自己的网站上使用的话，可能要进行一些魔改。定制的部分包括但不仅限于：
+  - 启用渲染的页面 - 只渲染地址中包含 `thread/`、`resource/` 等字样的页面
+  - 样式 - 取决于 MineBBS 正在用的主题。
+  - 渲染对象元素类名 - 取决于 MineBBS 正在用的主题。比如 `.bbWrapper` 代表放用户发的内容的地方。
+  - 更多见 `xf-markdown.ts`
+- **未完待续。**
 
-If all of above are OK for you, `xenforo-markdown` is here to use!
+如果上述对你而言都能接受，那么 `xenforo-markdown` 开箱即用！

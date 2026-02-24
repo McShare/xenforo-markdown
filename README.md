@@ -1,94 +1,106 @@
 # xenforo-markdown
 
-English | [简体中文](./README.zh.md)
+[English](./README.en.md) | 简体中文
 
-`xenforo-markdown` is an alternative solution to enable markdown support in XenForo. Not depending on XenForo itself, it makes markdown possible by observing the element behaviour (e.g. when a new `div` appeared after posting a new reply, do ...) and editing DOM element (e.g. replace element's `innerHTML` with the rendered one).
+`xenforo-markdown` 是 XenForo 论坛 Markdown 支持的一个替代方案。它并不依赖 XenForo 本身，只是通过控制元素的内容（比如把元素的原本内容换成解析后的内容）来实现对 Markdown 预览和显示的支持。目前只会影响发布主题和更新主题两个操作。
 
-The markdown parsing libary used in this project is [markdown-it](https://github.com/markdown-it/markdown-it). Before v1.1.0, it's Showdown (not maintained any longer).
+本项目所用到的 Markdown 解析库为 [markdown-it](https://github.com/markdown-it/markdown-it)。在 v1.1.0 之前，使用的是 Showdown（现已不再维护）。
 
-## XenForo Requirements
+## 对 XenForo 的要求
 
-The behaviour of your XenForo instance must match.
+要使脚本正常工作，你的 XenForo 上对内容的呈现方式必须与脚本实现的逻辑相匹配。
 
-For example, `xenforo-markdown` will render the markdown text to HTML on `.bbWrapper`, which is considered a standard when developing this script. If your XenForo instance uses another set of classes (e.g. `text-wrapper`, `wrapper` etc.) to arrange the elements, they won't be selected as expected because the class name doesn't match, and you may need to read the code and edit it to meet your actual situation.
+比如说，脚本会自动把带有 `bbWrapper` 这个类的元素里的文本转换成 HTML 替换上去，而如果你的 XenForo 在这方面表现得不一样，比如这个 `bbWrapper` 在你的论坛上面不叫 `bbWrapper` 而是 `textWrapper`、`wrapper` 之类的话，脚本将不能正常工作。通常情况下的 XenForo 是与脚本相匹配的（因为写脚本也是以当前 XenForo 为参考的），除非有一些特别大的更新或者用上了对这方面有影响的主题。如果类名等不匹配，你可能需要手动修改脚本中相应的内容。
 
-## Usage
+## 用法
 
-**Before you really start to use xenforo-markdown, please consider reading [Important Notes](./important-notes.md) to make sure everything satisfies your expectation.**
+**在正式开始使用 xenforo-markdown 之前，建议阅读[注意事项](./important-notes.md)，确保一切符合你的预期。**
 
-Here is one of the approaches to make the script work in your forum. Simply, it's just loading the script on every page of your forum.
+下面简单介绍了基本的安装方法，本质上就是让页面总是加载该脚本。
 
-1. Download required script and style sheets from [Actions](https://github.com/McShare/xenforo-markdown/actions) and put them into somewhere that you can access by URL directly.
-2. Go to `Appearance > Styles & Templates > Templates` then search & open the `PAGE_CONTAINER` template.
-3. Edit the content below to meet your need, and put it into the template content.
+1. 从 [Actions](https://github.com/McShare/xenforo-markdown/actions) 处下载最新的构建后解压，将所需的文件放到一个可以用直链访问的地方。
+2. 前往后台里的 `外观 > 风格 & 模板 > 模板列表` 搜索 `PAGE_CONTAINER` 模板打开。
+3. 把下面的内容修改后复制粘贴到模板中的某个位置。
 
 ```html
 <link rel="stylesheet" href="/path/to/markdown.min.css"/>
 <script src="/path/to/xf-markdown.min.js"></script>
 ```
 
-Click Save button to save changes. 
+保存即可。
 
-Now the scripts will be loaded in every page of your forum. However, `xenforo-markdown` will only act when `location.href` includes `post-thread`, `threads/`, and some other keywords (see in code) which refers to the thread posting page, thread content page and others.
-
-To write your post in Markdown, just put your contents into a BBCode-like structure `[MD][/MD]`.
+现在访问每个页面都会加载该脚本，不过脚本只会在地址中有 `post-thread`、`threads/` 或者其它几个关键字（详见代码）的时候发挥作用，分别对应发帖和浏览帖子等页面。写 Markdown 的时候，把内容放在 BBCode 类似的这样一个标签 `[MD][/MD]` 里即可。
 
 ```bbcode
 [MD]
 # Hello World!
 
-This is written in Markdown and your will see it in Preview and your final post.
+这是用 Markdown 写的，你可以在预览和实际的帖子中看到效果。
 [/MD]
-This is not markdown now! You can use BBCode and RTF here.
+这里不是 Markdown，你可以在这里用 BBCode 和富文本。
 ```
 
-All the text in `[MD]` section will be seen as markdown raw text, and their original format will be ignored. For instance, if you apply the **Bold** format to the contents covered with `[MD]` label using Rich Text Format functions provided by XenForo, the format will be ignored.
+需要注意的是 `[MD][/MD]` 里的内容会被看做是纯文本，所以它们的富文本效果会被忽略。
 
-## Building
+## 构建
 
-The browser-runnable script is generated from the source file written in TypeScript (`xf-markdown.ts` at root dir) by esbuild.
+`xf-markdown.min.js` 等可以在浏览器中直接运行的 JS 是从根目录中的 `xf-markdown.ts` 编译打包而来。
 
-To create a new build, please ensure that you have [`uglify-js`](https://github.com/mishoo/UglifyJS), [`lessc`](https://lesscss.org/usage/) and [`esbuild`](https://esbuild.github.io/) installed locally on your computer. You could install them by command.
+要创建一个新的构建，请先确保你的电脑上全局安装了[`uglify-js`](https://github.com/mishoo/UglifyJS)、[`lessc`](https://lesscss.org/usage/) 和 [`esbuild`](https://esbuild.github.io/)。如果没有可以用以下指令安装。
 
 ```sh
 npm i uglify-js less esbuild -g
 ```
 
-Then run `build` command defined in `package.json`.
+然后运行 `package.json` 里预先写好的 `build` 指令即可。
 
 ```sh
 npm run build
 ```
 
-Files generated then in `dist` includes
+运行后会在 `dist` 文件夹里生成以下文件：
 
-- `xf-markdown.js` - The bundled & compiled browser-runnable JavaScript file.
-- `xf-markdown.min.js` - (*recommended* as faster) The minified & mangled browser-runnable JavaScript file.
-- `xf-markdown.min.css` - The minified css generated from `markdown.less`.
+- `xf-markdown.js` - 打包和编译后的可以在浏览器中直接运行的 JS 文件
+- `xf-markdown.min.js` - (更快，推荐) 在原文件的基础上压缩并混淆之后的 JS 文件
+- `xf-markdown.min.css` - 压缩后的 CSS 文件，由 `markdown.less` 编译而来
 
-You can also simply download artifacts built automatically every commit from [Actions](https://github.com/McShare/xenforo-markdown/actions).
+你也可以在 [Action 页面](https://github.com/McShare/xenforo-markdown/actions)下载到每次提交后自动构建的版本。
 
-## Dark Detection `dark-detection.js`
+## 黑暗模式检测 `dark-detection.js`
 
-As dark mode getting popular among websites, xenforo-markdown provides CSS rules for the rendered elements under dark mode. 
+现在黑暗模式越来越广泛了，xenforo-markdown 也为渲染出来的元素添加了黑暗模式下的外观。
 
-The styles are applied if there's a `.dark` class present in the container element (i.e. `bbWrapper` on some sites). `dark-detection.js` simply listen on the switch element (some "Change Theme" or "Dark Mode" button on your site), determine if the user chooses to enter/leave dark mode and then add/remove `.dark` classes on the target elements accordingly. The code will also be executed once on page load.
+要让元素呈现出黑暗模式的外观，容器元素（也就是一些网站上的 `bbWrapper`）上需要有一个 `dark` 类。`dark-detection.js` 会监听开关元素（网站上可能出现的“切换主题”、“黑暗模式”的按钮等），然后判断用户是进入了黑暗模式，还是从黑暗模式中退出，根据这一点来决定添加或者删除指定元素上的 `dark` 类。
 
-This approach per se leads to incompatibility, however. You'll probably need to rewrite some of the logics (e.g. change the switch element selector and the target element selectors) yourself if you want it to work on your own site. And this is not the only means. You can absolutely write your own detection code to add the `.dark` class.
+这种方法本身就具有不兼容性。如果想让这些逻辑在你的网页上正确运行，你可能还需要做一些重写，比如修改目标元素的选择器。这种方法也并非唯一，你完全可以编写自己的代码来添加 `dark` 类。
 
-## Pros and Cons
+## 优劣对比
 
-Pros
+优势
 
-- Easy to use, develop and refactor as it is written in JavaScript and does not access any XenForo apis.
-- Easy to install and uninstall. *However it's a bad idea to uninstall it after you tell your users to use markdown. All the content in `[MD]` will become uncovered!*
-- 100% CommonMark support. See in [markdown-it](https://github.com/markdown-it/markdown-it).
+- 用起来写起来装起来都比较简单，因为不依靠任何 XenForo 的 API。
+- 安装和卸载很容易而且没有残留。*不过不建议在跟你的用户说可以用 Markdown 以后卸载，因为这样所有的 `[MD][/MD]` 内容都会变为纯文本。*
+- 全面 CommonMark 语法支持。详见 [markdown-it](https://github.com/markdown-it/markdown-it)
 
-Cons
-- Maybe laggy on some forum or some post which has numerous information, as it's JavaScript.
-- It changes the original content and depends on the original content to render. That is, the content is replaced in a way that seemed unnecessary. If it is an addon of XenForo, maybe it's possible to directly return the rendered content to front-end. However, the api doesn't seem to be easy to use in this aspect.
-- The source code of Markdown will appear in some laggy situations or devices, as the script needs time to render and control the DOM, which breaks (slightly) the user experience.
+劣势
+- 因为这是用 JS 写的所以对于一些较大的数据处理起来会比较卡。
+- 只是在前端将内容获取、转换然后替换，并没有做到和后端一样直接返回消息到前端来。这种方法说实话不是很好，显得有些多余，而且还会有性能问题。
+- 如果网络或者设备比较慢是会有一段时间看到 `[MD][/MD]` 里的内容的。如果你有解决的思路可以提 PR 或者 Issue。
 
-# License
+## 贡献
+
+欢迎帮助我们优化 xenforo-markdown 的表现，这包括但不仅限于
+- 让 xenforo-markdown 更加通用
+- 优化项目结构
+- 提升鲁棒性
+- 提升性能
+- 修复 Bug
+
+贡献流程：
+- Fork 项目，做出修改
+- 在本地进行测试，确保能正常运行。本地测试方法详见[本地测试说明](./docs/local-testing-note.md)。
+- 提出 PR
+
+# 协议
 
 MIT
