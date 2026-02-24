@@ -363,10 +363,9 @@ function main() {
 			// console.log(
 			// 	`debug remove markdown:\n--- before ---\n${digest.textContent}\n--- after ---\n${removeMarkdownTables(removeMd(digest.textContent))}`
 			// );
-			digest.innerText = removeMarkdownTables(removeMd(digest.textContent)).replace(
-				/\n/g,
-				' '
-			);
+			digest.innerText = removeMarkdownTables(removeMd(digest.textContent))
+				.replace(/\n/g, ' ')
+				.replace(/\[\/?MD\]/g, '');
 		});
 	}
 
