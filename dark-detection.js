@@ -4,7 +4,7 @@ function waitFor(selector) {
 			return resolve(document.querySelector(selector));
 		}
 
-		const observer = new MutationObserver(mutations => {
+		const observer = new MutationObserver(_ => {
 			if (document.querySelector(selector)) {
 				observer.disconnect();
 				resolve(document.querySelector(selector));
@@ -18,7 +18,13 @@ function waitFor(selector) {
 	});
 }
 
-const __xfmd_darkdetect_targets = ['.xfPreview', 'article.message-body', 'article.resourceBody-main', '.message-userContent .message-body', 'aside.message-signature'];
+const __xfmd_darkdetect_targets = [
+	'.xfPreview',
+	'article.message-body',
+	'article.resourceBody-main',
+	'.message-userContent .message-body',
+	'aside.message-signature'
+];
 
 function __xfmd__addTargetClass(className) {
 	__xfmd_darkdetect_targets.forEach(selector => {
@@ -37,12 +43,15 @@ function __xfmd__applyDarkDetection(indicator) {
 		console.log('[XFMD] Detected dark mode.');
 		__xfmd__addTargetClass('dark');
 		__xfmd__removeTargetClass('darkauto');
+		window.__xfmd_color_scheme = 'dark';
 	} else if (indicator.innerHTML.includes('fa-sun')) {
 		__xfmd__removeTargetClass('dark');
 		__xfmd__removeTargetClass('darkauto');
+		window.__xfmd_color_scheme = 'light';
 	} else if (indicator.innerHTML.includes('fa-adjust')) {
 		__xfmd__removeTargetClass('dark');
 		__xfmd__addTargetClass('darkauto');
+		window.__xfmd_color_scheme = 'auto';
 	}
 }
 
@@ -54,16 +63,18 @@ document.addEventListener('DOMContentLoaded', () => {
 			__xfmd__applyDarkDetection(__darkIndicator);
 		}
 
-		let __darkObserver = new MutationObserver(mutations => {
+		let __xfmd_dark_observer = new MutationObserver(mutations => {
 			mutations.forEach(m => {
-				const __darkIndicator = document.querySelector("a[class*='js-styleVariationsLink']");
+				const __darkIndicator = document.querySelector(
+					"a[class*='js-styleVariationsLink']"
+				);
 				if (__darkIndicator !== null) {
 					__xfmd__applyDarkDetection(__darkIndicator);
 				}
 			});
 		});
 
-		__darkObserver.observe(document.querySelector("a[class*='js-styleVariationsLink']"), {
+		__xfmd_dark_observer.observe(document.querySelector("a[class*='js-styleVariationsLink']"), {
 			childList: true,
 			subtree: true
 		});

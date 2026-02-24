@@ -314,13 +314,7 @@ function removeMarkdownTables(markdown: string) {
 	return result.join('\n');
 }
 function main() {
-	const startTime = new Date().getTime();
-	// get('/css.php?css=public:bb_code.less&s=51&l=2').done(a => {
-	// 	let style = document.createElement('style');
-	// 	style.innerText = a;
-	// 	style.setAttribute('xf-markdown', '');
-	// 	document.head.appendChild(style);
-	// });
+	const startTime = Date.now();
 
 	let targetEls: ArrayLike<Element> | null = null;
 	if (loc.includes('threads/')) {
@@ -388,6 +382,10 @@ function main() {
 				let tg = r.target as HTMLElement;
 				if (tg.style.display === '') {
 					let el = $('.xfPreview');
+					// @ts-ignore
+					if (window.__xfmd_color_scheme === 'dark') {
+						el.addClass('dark');
+					}
 					md(el);
 					convertRawPreCode(el);
 				}
@@ -410,6 +408,10 @@ function main() {
 								if (tgChild !== null) {
 									let el = $(tgChild) as JQuery<HTMLElement>;
 									if (el.text().includes('[MD]') && el.text().includes('[/MD]')) {
+										// @ts-ignore
+										if (window.__xfmd_color_scheme === 'dark') {
+											el.addClass('dark');
+										}
 										md(el);
 										convertRawPreCode(el);
 									}
@@ -487,7 +489,7 @@ function main() {
 			});
 	}
 
-	const endTime = new Date().getTime();
+	const endTime = Date.now();
 
 	if (renderCount > 0) {
 		console.log(`Took ${endTime - startTime}ms rendering ${renderCount} items.`);
