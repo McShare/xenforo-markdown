@@ -2,6 +2,9 @@
 
 [English](./README.en.md) | 简体中文
 
+> [!TIPS]
+> 欢迎贡献！请查看[贡献](#贡献)一节。
+
 `xenforo-markdown` 是 XenForo 论坛 Markdown 支持的一个替代方案。它并不依赖 XenForo 本身，只是通过控制元素的内容（比如把元素的原本内容换成解析后的内容）来实现对 Markdown 预览和显示的支持。目前只会影响发布主题和更新主题两个操作。
 
 本项目所用到的 Markdown 解析库为 [markdown-it](https://github.com/markdown-it/markdown-it)。在 v1.1.0 之前，使用的是 Showdown（现已不再维护）。
