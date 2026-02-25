@@ -47,15 +47,7 @@
 
 ## 构建
 
-`xf-markdown.min.js` 等可以在浏览器中直接运行的 JS 是从根目录中的 `xf-markdown.ts` 编译打包而来。
-
-要创建一个新的构建，请先确保你的电脑上全局安装了[`uglify-js`](https://github.com/mishoo/UglifyJS)、[`lessc`](https://lesscss.org/usage/) 和 [`esbuild`](https://esbuild.github.io/)。如果没有可以用以下指令安装。
-
-```sh
-npm i uglify-js less esbuild -g
-```
-
-然后运行 `package.json` 里预先写好的 `build` 指令即可。
+使用 `npm install` 安装必要的依赖后，可以运行下面的指令完成构建
 
 ```sh
 npm run build
@@ -63,8 +55,7 @@ npm run build
 
 运行后会在 `dist` 文件夹里生成以下文件：
 
-- `xf-markdown.js` - 打包和编译后的可以在浏览器中直接运行的 JS 文件
-- `xf-markdown.min.js` - (更快，推荐) 在原文件的基础上压缩并混淆之后的 JS 文件
+- `xf-markdown.min.js` - 编译和压缩后的 JS 文件
 - `xf-markdown.min.css` - 压缩后的 CSS 文件，由 `markdown.less` 编译而来
 
 你也可以在 [Action 页面](https://github.com/McShare/xenforo-markdown/actions)下载到每次提交后自动构建的版本。
