@@ -2,7 +2,7 @@ import * as esbuild from 'esbuild';
 import fs from 'node:fs';
 
 await esbuild.build({
-	entryPoints: ['xf-markdown.ts'],
+	entryPoints: ['./src/main.ts'],
 	bundle: true,
 	watch: {
 		onRebuild(error) {

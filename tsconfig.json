@@ -11,6 +11,6 @@
     "skipLibCheck": true
   },
   "include": [
-    "xf-markdown.ts"
+    "src/**/*.ts"
   ]
 }

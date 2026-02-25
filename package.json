@@ -1,10 +1,10 @@
 {
   "name": "xenforo-markdown",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Simple alternative implementation of Markdown in XenForo",
   "main": "xf-markdown.ts",
   "scripts": {
-    "build": "node ./build.mjs && lessc markdown.less --clean-css='--s1 --advanced --compatibility=*' > dist/markdown.min.css",
+    "build": "node ./build.mjs && lessc ./src/markdown.less --clean-css='--s1 --advanced --compatibility=*' > dist/markdown.min.css",
     "watch": "node ./watch.mjs"
   },
   "repository": {
@@ -28,15 +28,16 @@
     "markdown-it": "^14.1.0",
     "prismjs": "^1.27.0",
     "remove-markdown": "^0.6.3",
-    "underscore": "^1.13.4",
     "xss": "^1.0.11"
   },
   "devDependencies": {
     "@types/jquery": "^3.5.14",
     "@types/markdown-it": "^14.1.2",
+    "@types/node": "^25.3.0",
     "@types/prismjs": "^1.26.0",
     "@types/underscore": "^1.11.4",
     "esbuild": "0.14.54",
+    "typescript": "^5.9.3",
     "uglify-js": "^3.15.3"
   }
 }
